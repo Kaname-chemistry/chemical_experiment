@@ -37,7 +37,7 @@ check('og:description (日本語)', /[ぁ-んァ-ン一-龥]/.test(meta('og:desc
 const ext = [...src.matchAll(/https?:\/\/[^"'\s)]+/g)].map(m => m[0])
   .filter(u => !u.startsWith(`https://cdn.jsdelivr.net/npm/three@${THREE_VER}/`) && !u.startsWith(base));
 check('外部読み込みは three.js 固定版のみ', ext.length === 0, ext.join(', '));
-check('安全表示あり', /teacher/i.test(src));
+check('安全表示あり', /teacher|先生/i.test(src));
 
 // ---------- browser ----------
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });

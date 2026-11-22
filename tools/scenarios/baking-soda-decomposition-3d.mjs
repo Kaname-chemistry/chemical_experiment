@@ -8,7 +8,7 @@ export async function scenarios(page, check, shots) {
   // 1. 正しい手順
   await run(page, `api.reset(); api.setBurner(true); api.step(2.0);`);
   let s = await state(page);
-  check('最初の泡は空気（石灰水は透明）', s.turb < 0.01 && s.log.some(l => /air pushed out/.test(l)), `turb ${s.turb.toFixed(3)} co2 ${s.co2.toFixed(1)}`);
+  check('最初の泡は空気（石灰水は透明）', s.turb < 0.01 && s.log.some(l => /押し出された空気/.test(l)), `turb ${s.turb.toFixed(3)} co2 ${s.co2.toFixed(1)}`);
   await run(page, `api.step(60);`);
   s = await state(page);
   check('完了ログの質量が理論値 1.26 g', s.log.some(l => /2\.00 g → 1\.26 g/.test(l)));
@@ -25,19 +25,19 @@ export async function scenarios(page, check, shots) {
   check('塩化コバルト紙が桃色（水）', s.co && s.co.pink);
   await run(page, `api.testPh(); api.step(3);`);
   s = await state(page);
-  check('フェノールフタレインで残留物が濃い桃色', s.log.some(l => /deep pink/.test(l)));
+  check('フェノールフタレインで残留物が濃い桃色', s.log.some(l => /濃い赤/.test(l)));
   await page.screenshot({ path: `${shots}/baking-soda-decomposition-3d-tests.jpg`, type: 'jpeg', quality: 82 });
 
   // 2. 口を上げる → 水が逆流して割れる
   await run(page, `api.reset(); api.setTilt('up'); api.step(1); api.setBurner(true); api.step(40);`);
   s = await state(page);
-  check('口を上げる → 水の逆流で割れる', s.broken && /ran back/.test(s.broken), s.broken || 'not broken');
+  check('口を上げる → 水の逆流で割れる', s.broken && /流れ戻/.test(s.broken), s.broken || 'not broken');
   await page.screenshot({ path: `${shots}/baking-soda-decomposition-3d-crack.jpg`, type: 'jpeg', quality: 82 });
 
   // 3. 水平でも時間がたつと逆流する
   await run(page, `api.reset(); api.setTilt('level'); api.step(1); api.setBurner(true); api.step(45);`);
   s = await state(page);
-  check('水平 → 遅れて逆流し割れる', s.broken && /ran back/.test(s.broken), s.broken || 'not broken');
+  check('水平 → 遅れて逆流し割れる', s.broken && /流れ戻/.test(s.broken), s.broken || 'not broken');
 
   // 4. 先に火を消す → 石灰水が逆流
   await run(page, `api.reset(); api.setBurner(true); api.step(20); api.setBurner(false); api.step(2.0);`);
@@ -46,17 +46,17 @@ export async function scenarios(page, check, shots) {
   await page.screenshot({ path: `${shots}/baking-soda-decomposition-3d-suckback.jpg`, type: 'jpeg', quality: 82 });
   await run(page, `api.step(4);`);
   s = await state(page);
-  check('放置すると石灰水の逆流で割れる', s.broken && /Suck-back/.test(s.broken), s.broken || 'not broken');
+  check('放置すると石灰水の逆流で割れる', s.broken && /逆流/.test(s.broken), s.broken || 'not broken');
 
   // 5. 逆流中にガラス管を抜けば間に合う
   await run(page, `api.reset(); api.setBurner(true); api.step(20); api.setBurner(false); api.step(2.0); api.setLift(true); api.step(3);`);
   s = await state(page);
-  check('逆流中に抜けば助かる', !s.broken && s.suck === 0 && s.log.some(l => /in time/.test(l)));
+  check('逆流中に抜けば助かる', !s.broken && s.suck === 0 && s.log.some(l => /間に合/.test(l)));
 
   // 6. 口を上げても、水がたまる前に下げれば戻る
   await run(page, `api.reset(); api.setTilt('down'); api.setBurner(true); api.step(25); api.setTilt('up'); api.step(1.6); api.setTilt('down'); api.step(4);`);
   s = await state(page);
-  check('途中で口を下げ直すと水が口元に戻る', !s.broken && s.log.some(l => /drained back/.test(l)), s.broken || '');
+  check('途中で口を下げ直すと水が口元に戻る', !s.broken && s.log.some(l => /口元に戻/.test(l)), s.broken || '');
 }
 
 export async function ogp(page) {

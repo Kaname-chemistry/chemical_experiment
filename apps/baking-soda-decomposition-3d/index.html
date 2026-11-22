@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Baking Soda Bench · Thermal Decomposition of NaHCO₃</title>
+<title>炭酸水素ナトリウムの熱分解 | Baking Soda Bench</title>
 <meta name="description" content="炭酸水素ナトリウムの熱分解を3Dで体験。試験管の口を上げると水が逆流して割れる、火を先に消すと石灰水が逆流する——教科書の注意の理由を、わざと失敗して確かめられます。">
 <meta property="og:title" content="Baking Soda Bench | 炭酸水素ナトリウムの熱分解シミュレーション">
 <meta property="og:description" content="炭酸水素ナトリウムの熱分解を3Dで体験。試験管の口を上げると水が逆流して割れる、火を先に消すと石灰水が逆流する——教科書の注意の理由を、わざと失敗して確かめられます。">
@@ -19,7 +19,7 @@
 <link rel="icon" href="data:,">
 <style>
   html,body{margin:0;height:100%;overflow:hidden;background:#c7cfd6;color:#132331;
-    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-family:system-ui,-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif;
     -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
   #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
   .glass{position:fixed;background:rgba(244,248,252,.5);
@@ -97,40 +97,40 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="hint">Drag to orbit · scroll / pinch to zoom</div>
+<div id="hint">ドラッグで回転 · ホイール / ピンチで拡大</div>
 
 <div id="hud" class="glass">
-  <div class="cap">Solid in heated tube</div>
-  <div class="big"><div id="mass">2.00<small>g</small></div><div id="conv">0% decomposed</div></div>
+  <div class="cap">加熱している試験管の固体</div>
+  <div class="big"><div id="mass">2.00<small>g</small></div><div id="conv">分解 0%</div></div>
   <div class="bar"><b id="convBar"></b></div>
   <div id="eq"><span id="e0">2NaHCO₃</span> → <span id="e1">Na₂CO₃</span> + <span id="e2">H₂O</span> + <span id="e3">CO₂</span></div>
   <div class="reads">
-    <div class="rd"><div class="k">Bottom</div><div class="v" id="temp">25<small>°C</small></div></div>
-    <div class="rd"><div class="k">CO₂ (25 °C)</div><div class="v" id="co2">0<small>mL</small></div></div>
-    <div class="rd x"><div class="k x">Water</div><div class="v" id="h2o">0.00<small>g</small></div></div>
+    <div class="rd"><div class="k">底の温度</div><div class="v" id="temp">25<small>°C</small></div></div>
+    <div class="rd"><div class="k">CO₂（25 °C）</div><div class="v" id="co2">0<small>mL</small></div></div>
+    <div class="rd x"><div class="k x">水</div><div class="v" id="h2o">0.00<small>g</small></div></div>
   </div>
-  <div class="cap">Lime water</div>
-  <div class="obs"><div id="chip"></div><div><div id="lname">clear</div><div id="lnote">Ca(OH)₂ solution</div></div></div>
-  <div class="cap">Log</div>
-  <ul id="log"><li class="empty">Light the burner to start heating</li></ul>
-  <div id="safe">Simulation only — do real experiments under a teacher's supervision.</div>
+  <div class="cap">石灰水</div>
+  <div class="obs"><div id="chip"></div><div><div id="lname">無色透明</div><div id="lnote">Ca(OH)₂ 水溶液</div></div></div>
+  <div class="cap">記録</div>
+  <ul id="log"><li class="empty">ガスバーナーに火をつけて加熱を始めよう</li></ul>
+  <div id="safe">これはシミュレーションです。実際の実験は必ず先生の指導のもとで行ってください。</div>
 </div>
 
 <div id="ctrl" class="glass">
   <div class="row">
-    <button id="bBurn" class="primary">Light burner</button>
-    <button id="bLift">Lift tube out</button>
-    <button id="bReset">Reset</button>
+    <button id="bBurn" class="primary">火をつける</button>
+    <button id="bLift">ガラス管を抜く</button>
+    <button id="bReset">やり直す</button>
   </div>
   <div class="row">
-    <span class="lbl">Tube tilt</span>
+    <span class="lbl">試験管の向き</span>
     <div class="seg" id="tilt">
-      <button data-t="down" class="on">Mouth down</button><button data-t="level" class="bad">Level</button><button data-t="up" class="bad">Mouth up</button>
+      <button data-t="down" class="on">口を下げる</button><button data-t="level" class="bad">水平</button><button data-t="up" class="bad">口を上げる</button>
     </div>
   </div>
   <div class="row">
-    <button id="bCo">CoCl₂ paper test</button>
-    <button id="bPh">Phenolphthalein test</button>
+    <button id="bCo">塩化コバルト紙</button>
+    <button id="bPh">フェノールフタレイン</button>
   </div>
 </div>
 <div id="toast"></div>
@@ -246,8 +246,8 @@ function label(text, sub, w = 256, h = 128, band = '#3d5566') {
     g.fillStyle = '#fbfaf6'; g.fillRect(0, 0, w, h);
     g.fillStyle = band; g.fillRect(0, 0, w, 14);
     g.fillStyle = '#111a21'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.font = `800 ${Math.min(44, Math.floor(w * 1.5 / Math.max(4, text.length)))}px system-ui,sans-serif`; g.fillText(text, w / 2, 60);
-    g.font = '500 18px system-ui,sans-serif'; g.fillStyle = '#4b5e6b'; g.fillText(sub, w / 2, 104);
+    g.font = `800 ${Math.min(44, Math.floor(w * 1.5 / Math.max(4, text.length)))}px system-ui,"Hiragino Sans","Noto Sans JP",IPAPGothic,sans-serif`; g.fillText(text, w / 2, 60);
+    g.font = '500 18px system-ui,"Hiragino Sans","Noto Sans JP",IPAPGothic,sans-serif'; g.fillStyle = '#4b5e6b'; g.fillText(sub, w / 2, 104);
   });
 }
 const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -454,7 +454,7 @@ function setLimeLevel(y) {
   limeTop.position.set(LIME.x, y, LIME.z);
 }
 setLimeLevel(LIME_LEVEL);
-const limeLabel = add(new THREE.PlaneGeometry(2.8, 1.4), new THREE.MeshStandardMaterial({ map: label('lime water', 'Ca(OH)₂ aq'), roughness: 0.8 }), { p: [LIME.x, 1.85, LIME.z + 2.04] });
+const limeLabel = add(new THREE.PlaneGeometry(2.8, 1.4), new THREE.MeshStandardMaterial({ map: label('石灰水', 'Ca(OH)₂ aq'), roughness: 0.8 }), { p: [LIME.x, 1.85, LIME.z + 2.04] });
 // delivery glass tube (moves up when lifted)
 const DIP_LEN = 15, DIP_Y0 = 2.6, LIFT_H = 7;
 const dip = new THREE.Group(); dip.position.set(LIME.x, 0, LIME.z); scene.add(dip);
@@ -496,7 +496,7 @@ for (const [i, dx] of [[0, -1.4], [1, 1.4]]) {
   const body = add(new THREE.CylinderGeometry(PR - 0.07, PR - 0.07, 1, 24), m, { p: [PH.x + dx, 0, PH.z], ro: 3 });
   const bot = add(new THREE.SphereGeometry(PR - 0.07, 24, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), m, { p: [PH.x + dx, 0.7 + PR, PH.z], ro: 3 });
   phLiq.push({ m, body, bot, fill: 0, target: 0, col: new THREE.Color(0xf2f7f9), toCol: new THREE.Color(0xf2f7f9) });
-  const lt = label(i === 0 ? 'NaHCO₃' : 'residue', i === 0 ? 'unheated' : 'after heating', 256, 128, i === 0 ? '#3d5566' : '#c0561c');
+  const lt = label(i === 0 ? 'NaHCO₃' : '加熱後', i === 0 ? '加熱前' : '残った固体', 256, 128, i === 0 ? '#3d5566' : '#c0561c');
   add(new THREE.PlaneGeometry(2.4, 1.2), new THREE.MeshStandardMaterial({ map: lt, roughness: 0.8 }), { p: [PH.x + dx, 5.4, PH.z + 1.75], r: [-0.25, 0, 0] });
 }
 function setPhFill(p) {
@@ -506,7 +506,7 @@ function setPhFill(p) {
 }
 phLiq.forEach(setPhFill);
 // sample bottle label card in front of the burner
-add(new THREE.PlaneGeometry(3.6, 1.8), new THREE.MeshStandardMaterial({ map: label('NaHCO₃ 2.00 g', 'sodium hydrogen carbonate', 320, 128), roughness: 0.8 }), { p: [-6.5, 0.9, 7.5], r: [-1.1, 0, 0], recv: true });
+add(new THREE.PlaneGeometry(3.6, 1.8), new THREE.MeshStandardMaterial({ map: label('NaHCO₃ 2.00 g', '炭酸水素ナトリウム', 320, 128), roughness: 0.8 }), { p: [-6.5, 0.9, 7.5], r: [-1.1, 0, 0], recv: true });
 
 /* ================================================================
    State
@@ -534,7 +534,7 @@ function crackTube(reason) {
   S.broken = reason; S.burner = false; crack.visible = true;
   tubeMat.color.set(0xd9b8ac); tubeMat.opacity = 0.2;
   S.run = null; runDrop.visible = false;
-  logPush(reason, 'cracked', '#c0392b');
+  logPush(reason, '破損', '#c0392b');
   toast(reason, true);
   updateButtons();
 }
@@ -567,12 +567,12 @@ function sim(dt) {
   if (S.dipped && S.suck === 0) {
     S.absorbed += ABSORB * gasMol;
     S.turb = Math.min(1, S.absorbed / LIME_CAP);
-    if (!S.flags.air && S.flow > 0.5 && S.co2mL < 3) { S.flags.air = true; logPush('First bubbles are air pushed out of the tube — lime water stays clear', '', '#bfe3f2'); }
-    if (!S.flags.milky && S.turb > 0.08) { S.flags.milky = true; logPush('Lime water turns milky → CO₂ is produced', 'CO₂', '#f1f1ec', 'ok'); }
+    if (!S.flags.air && S.flow > 0.5 && S.co2mL < 3) { S.flags.air = true; logPush('最初の泡は試験管から押し出された空気 — 石灰水はにごらない', '', '#bfe3f2'); }
+    if (!S.flags.milky && S.turb > 0.08) { S.flags.milky = true; logPush('石灰水が白くにごった → 二酸化炭素が発生', 'CO₂', '#f1f1ec', 'ok'); }
   }
-  if (!S.flags.water && S.cond > 0.015) { S.flags.water = true; logPush('Droplets of liquid form near the mouth', '', '#dff0ff'); }
-  if (!S.flags.done && conv() > 0.999) { S.flags.done = true; logPush(`Decomposition complete: 2.00 g → ${massSolid().toFixed(2)} g`, 'done', '#f6f6f2', 'ok'); }
-  if (S.burner && !S.dipped && !S.flags.openAir && S.flow > 0.5) { S.flags.openAir = true; logPush('Gas escaping to air — lime water not tested', '', '#c8d0d6'); }
+  if (!S.flags.water && S.cond > 0.015) { S.flags.water = true; logPush('試験管の口付近に液体がついた', '', '#dff0ff'); }
+  if (!S.flags.done && conv() > 0.999) { S.flags.done = true; logPush(`分解完了：2.00 g → ${massSolid().toFixed(2)} g`, '完了', '#f6f6f2', 'ok'); }
+  if (S.burner && !S.dipped && !S.flags.openAir && S.flow > 0.5) { S.flags.openAir = true; logPush('気体は空気中へ — 石灰水では調べていない', '', '#c8d0d6'); }
 
   // tilt animation (and condensed water flowing)
   const thT = TILT[S.tilt];
@@ -582,15 +582,15 @@ function sim(dt) {
     const dh = downhill();
     if (!S.run && ((dh === 'bottom' && S.cond > 0.02) || (dh === 'level' && S.cond > 0.06))) {
       S.run = { x: MOUTH_X + 1.4, amt: S.cond }; S.cond = 0;
-      if (!S.flags.runWarn) { S.flags.runWarn = true; toast('Condensed water is running back toward the hot bottom!', true); }
+      if (!S.flags.runWarn) { S.flags.runWarn = true; toast('口元で冷えた水が、熱い底のほうへ流れていく！', true); }
     }
     if (S.run) {
       const v = dh === 'bottom' ? 3.2 : dh === 'level' ? 0.8 : -3.2;
       S.run.x += v * dt;
-      if (S.run.x <= MOUTH_X + 1.2) { S.cond += S.run.amt; S.run = null; logPush('Water drained back to the mouth', 'saved', '#dff0ff', 'ok'); }
+      if (S.run.x <= MOUTH_X + 1.2) { S.cond += S.run.amt; S.run = null; logPush('水が口元に戻った', 'セーフ', '#dff0ff', 'ok'); }
       else if (S.run.x >= POW_X - 2.0) {
-        if (S.T > CRACK_T) crackTube('Water ran back onto the hot glass and the tube cracked. Keep the mouth slightly lower than the bottom.');
-        else { logPush('Water ran back onto the powder — not hot enough to crack yet, but still dangerous', '', '#dff0ff'); S.run = null; }
+        if (S.T > CRACK_T) crackTube('口元の水が熱い底に流れ戻り、試験管が割れた。試験管の口は底より少し下げよう。');
+        else { logPush('水が粉末まで流れた — まだ割れる温度ではないが、危険な状態', '', '#dff0ff'); S.run = null; }
       }
     }
   }
@@ -599,15 +599,15 @@ function sim(dt) {
   if (cooling || (S.suck > 0 && S.dipped && !S.burner && !S.broken)) {
     S.suckT += dt;
     if (S.suckT > 0.6) {
-      if (!S.sucking) { S.sucking = true; toast('Lime water is being drawn back up the tube — lift it out!', true); logPush('Gas cools and steam condenses — pressure in the tube drops', '', '#e4f1f6'); }
+      if (!S.sucking) { S.sucking = true; toast('石灰水が逆流してくる — ガラス管を抜いて！', true); logPush('気体が冷え、水蒸気が水に戻って試験管内の圧力が下がる', '', '#e4f1f6'); }
       S.suck = Math.min(1, S.suck + dt / 3.2);
     }
-    if (S.suck >= 1) crackTube('Suck-back: cold lime water reached the hot tube and cracked it. Take the tube out of the lime water before turning off the burner.');
+    if (S.suck >= 1) crackTube('逆流：冷たい石灰水が熱い試験管に入り、割れた。火を消す前にガラス管を石灰水から抜こう。');
   } else {
     S.suckT = 0;
     if (S.suck > 0) {
       S.suck = Math.max(0, S.suck - dt / 0.7);
-      if (S.suck === 0 && S.sucking && !S.broken) { S.sucking = false; logPush('Lifted in time — lime water drained back', 'saved', '#e4f1f6', 'ok'); }
+      if (S.suck === 0 && S.sucking && !S.broken) { S.sucking = false; logPush('間に合った — 石灰水は元に戻った', 'セーフ', '#e4f1f6', 'ok'); }
     }
   }
   if (Math.abs(S.theta - prevTh) > 1e-5 || Math.abs(S.lift - prevLift) > 1e-5 || !rubber) {
@@ -695,7 +695,7 @@ let hudDirty = true, hudT = 0;
 function updateHud() {
   const c = conv();
   $('mass').innerHTML = `${massSolid().toFixed(2)}<small>g</small>`;
-  $('conv').textContent = `${Math.round(c * 100)}% decomposed`;
+  $('conv').textContent = `分解 ${Math.round(c * 100)}%`;
   $('convBar').style.width = `${(c * 100).toFixed(1)}%`;
   $('temp').innerHTML = `${Math.round(S.T)}<small>°C</small>`;
   $('co2').innerHTML = `${Math.round(S.co2mL)}<small>mL</small>`;
@@ -706,10 +706,10 @@ function updateHud() {
   const col = limeMat.color.clone().convertLinearToSRGB();
   $('chip').style.background = `rgb(${Math.round(col.r * 255)},${Math.round(col.g * 255)},${Math.round(col.b * 255)})`;
   $('chip').style.opacity = 0.55 + 0.45 * tb;
-  if (S.suck > 0.01) { $('lname').textContent = 'being sucked back!'; $('lnote').textContent = 'pressure in the hot tube is dropping'; }
-  else if (S.turb < 0.08) { $('lname').textContent = 'clear'; $('lnote').textContent = S.dipped ? 'Ca(OH)₂ solution' : 'delivery tube lifted out'; }
-  else if (S.turb < 0.35) { $('lname').textContent = 'turning cloudy'; $('lnote').textContent = 'CaCO₃ precipitate forming'; }
-  else { $('lname').textContent = 'milky white'; $('lnote').textContent = 'Ca(OH)₂ + CO₂ → CaCO₃↓ + H₂O'; }
+  if (S.suck > 0.01) { $('lname').textContent = '逆流している！'; $('lnote').textContent = '試験管内の圧力が下がっている'; }
+  else if (S.turb < 0.08) { $('lname').textContent = '無色透明'; $('lnote').textContent = S.dipped ? 'Ca(OH)₂ 水溶液' : 'ガラス管は抜いてある'; }
+  else if (S.turb < 0.35) { $('lname').textContent = '白くにごり始めた'; $('lnote').textContent = 'CaCO₃ の沈殿ができている'; }
+  else { $('lname').textContent = '白くにごった'; $('lnote').textContent = 'Ca(OH)₂ + CO₂ → CaCO₃↓ + H₂O'; }
 }
 const logEl = $('log'); const LOGMAX = 7;
 function logPush(text, tag = '', color = '#fff', cls = '') {
@@ -725,45 +725,45 @@ let tt; function toast(s, warn = false) { const e = $('toast'); e.textContent = 
    ================================================================ */
 function updateButtons() {
   const b = $('bBurn');
-  b.textContent = S.burner ? 'Turn off burner' : 'Light burner'; b.classList.toggle('lit', S.burner);
-  $('bLift').textContent = S.liftTarget > 0.5 ? 'Put tube in lime water' : 'Lift tube out';
+  b.textContent = S.burner ? '火を消す' : '火をつける'; b.classList.toggle('lit', S.burner);
+  $('bLift').textContent = S.liftTarget > 0.5 ? 'ガラス管を入れる' : 'ガラス管を抜く';
   document.querySelectorAll('#tilt button').forEach(x => x.classList.toggle('on', x.dataset.t === S.tilt));
 }
 function setBurner(on) {
-  if (S.broken) { toast('The tube is cracked — press Reset'); return; }
+  if (S.broken) { toast('試験管が割れています —「やり直す」を押してください'); return; }
   if (on === S.burner) return;
   S.burner = on;
-  if (on) logPush(S.tilt === 'down' ? 'Burner lit — heating the bottom of the tube' : `Burner lit — tube is ${S.tilt === 'up' ? 'mouth up' : 'level'}`, '', '#6f8cff');
-  else logPush(S.dipped ? 'Burner off — delivery tube still in lime water' : 'Burner off', '', '#8899aa');
+  if (on) logPush(S.tilt === 'down' ? '点火 — 試験管の底を加熱' : `点火 — 試験管は${S.tilt === 'up' ? '口が上向き' : '水平'}`, '', '#6f8cff');
+  else logPush(S.dipped ? '消火 — ガラス管は石灰水に入ったまま' : '消火', '', '#8899aa');
   updateButtons();
 }
 function setLift(up) {
   S.liftTarget = up ? 1 : 0;
-  if (up && S.suck > 0) toast('Lifting the delivery tube…');
+  if (up && S.suck > 0) toast('ガラス管を引き上げています…');
   updateButtons();
 }
 function setTilt(t) {
   if (!(t in TILT) || t === S.tilt) return;
   S.tilt = t; updateButtons();
-  if (t !== 'down') toast(t === 'up' ? 'Mouth up: condensed water can run back to the hot bottom' : 'Level: water can still creep back toward the bottom');
+  if (t !== 'down') toast(t === 'up' ? '口が上向き：冷えた水が熱い底へ流れ戻るおそれ' : '水平：水が少しずつ底へ流れ戻るおそれ');
 }
 function testCoCl2() {
-  if (S.burner) { toast('Turn the burner off and let the tube cool first'); return; }
+  if (S.burner) { toast('先に火を消して、試験管を冷ましてください'); return; }
   const water = S.cond + (S.run ? S.run.amt : 0);
   const pink = water > 0.01;
   S.co = { t: 0, pink }; coPaper.visible = true; coPaperMat.color.set(0x2b55c9);
-  logPush(pink ? 'CoCl₂ paper: blue → pink → the liquid contains water (H₂O is produced)' : 'CoCl₂ paper stays blue — no liquid at the mouth yet', 'H₂O', pink ? '#f08fb0' : '#2b55c9', pink ? 'ok' : '');
+  logPush(pink ? '塩化コバルト紙：青 → 赤（桃）→ 液体は水をふくむ（H₂O が発生）' : '塩化コバルト紙は青のまま — 口元にまだ液体がない', 'H₂O', pink ? '#f08fb0' : '#2b55c9', pink ? 'ok' : '');
 }
 function testPh() {
-  if (S.burner) { toast('Turn the burner off first'); return; }
-  if (S.T > 60) { toast('Let the tube cool before taking out the residue'); return; }
+  if (S.burner) { toast('先に火を消してください'); return; }
+  if (S.T > 60) { toast('試験管が冷めてから、残った固体を取り出そう'); return; }
   const c = conv();
   const faint = srgb(0.99, 0.9, 0.94), deep = srgb(0.86, 0.12, 0.5);
   phLiq[0].target = 1; phLiq[0].toCol = faint.clone(); phLiq[0].colA = 0.15;
   phLiq[1].target = 1; phLiq[1].toCol = faint.clone().lerp(deep, Math.pow(c, 0.8)); phLiq[1].colA = 0.15 + 0.85 * c;
   phLiq.forEach(p => { if (p.fill > 0.9) { p.fill = 0; p.col.set(0xf2f7f9); } });
-  logPush(c < 0.1 ? 'Phenolphthalein: both faint pink — little has decomposed yet'
-    : `Phenolphthalein: residue turns ${c > 0.8 ? 'deep ' : ''}pink — Na₂CO₃ is more strongly basic than NaHCO₃`, 'pH', c < 0.1 ? '#fbe3ec' : '#d81f80', c >= 0.1 ? 'ok' : '');
+  logPush(c < 0.1 ? 'フェノールフタレイン：どちらもうすい赤 — まだほとんど分解していない'
+    : `フェノールフタレイン：加熱後の固体は${c > 0.8 ? '濃い' : ''}赤 — Na₂CO₃ は NaHCO₃ より強い塩基性`, 'pH', c < 0.1 ? '#fbe3ec' : '#d81f80', c >= 0.1 ? 'ok' : '');
   S.phDone = true;
 }
 function reset() {
@@ -771,7 +771,7 @@ function reset() {
   crack.visible = false; tubeMat.color.set(0xffffff); tubeMat.opacity = 0.13; coPaper.visible = false; runDrop.visible = false;
   phLiq.forEach(p => { p.fill = 0; p.target = 0; p.colA = 0; p.col.set(0xf2f7f9); p.toCol.set(0xf2f7f9); });
   tube.rotation.z = S.theta; dip.position.y = 0; rebuildRubber();
-  logEl.innerHTML = '<li class="empty">Light the burner to start heating</li>';
+  logEl.innerHTML = '<li class="empty">ガスバーナーに火をつけて加熱を始めよう</li>';
   updateButtons(); hudDirty = true;
 }
 $('bBurn').addEventListener('click', () => setBurner(!S.burner));
