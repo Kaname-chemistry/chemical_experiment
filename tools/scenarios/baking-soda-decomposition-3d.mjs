@@ -100,9 +100,9 @@ export const videos = {
     ],
   },
   'full-experiment': {
-    seconds: 24,
+    seconds: 20,
     speedJs: `const S = api.S; return (S.burner && api.conv() < 0.995) ? 6 : (!S.burner && S.T > 58 ? 8 : 1);`,
-    cam: [{ t: 0, ...WIDE }, { t: 9, target: [-7, 11, 1], pos: [-12, 23, 42] }, { t: 16, target: [-1, 9, 2], pos: [8, 21, 42] }, { t: 24, target: [1, 8, 3], pos: [10, 19, 38] }],
+    cam: [{ t: 0, ...WIDE }, { t: 8, target: [-7, 11, 1], pos: [-12, 23, 42] }, { t: 11, target: [-7, 11, 1], pos: [-12, 23, 42] }, { t: 14, target: [9.5, 4.5, 5], pos: [3, 11, 24] }, { t: 20, target: [10.5, 4.5, 5], pos: [5, 10.5, 22] }],
     cues: [
       { t: 0.3, caption: '正しい手順：口を少し下げて加熱', hold: 2.8 },
       { t: 1.0, click: '#bBurn' },

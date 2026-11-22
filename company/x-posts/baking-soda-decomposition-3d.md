@@ -87,7 +87,7 @@ https://kaname-chemistry.github.io/baking-soda-decomposition-3d/
 
 ---
 
-## 3日目（先生・受験生向け）— 動画：`full-experiment.mp4`（2日目を引用リポスト）
+## 3日目（先生・受験生向け）— 動画：`full-experiment.mp4`（20秒・2日目を引用リポスト）
 
 ### 本文
 ```text
