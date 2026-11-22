@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>炭酸水素ナトリウムの熱分解 | Baking Soda Bench</title>
+<meta name="description" content="炭酸水素ナトリウムの熱分解を3Dで体験。試験管の口を上げると水が逆流して割れる、火を先に消すと石灰水が逆流する——教科書の注意の理由を、わざと失敗して確かめられます。">
+<meta property="og:title" content="Baking Soda Bench | 炭酸水素ナトリウムの熱分解シミュレーション">
+<meta property="og:description" content="炭酸水素ナトリウムの熱分解を3Dで体験。試験管の口を上げると水が逆流して割れる、火を先に消すと石灰水が逆流する——教科書の注意の理由を、わざと失敗して確かめられます。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kaname-chemistry.github.io/baking-soda-decomposition-3d/">
+<meta property="og:image" content="https://kaname-chemistry.github.io/baking-soda-decomposition-3d/ogp.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Baking Soda Bench | 炭酸水素ナトリウムの熱分解シミュレーション">
+<meta name="twitter:description" content="口を上げると水が逆流して割れる、火を先に消すと石灰水が逆流する。教科書の注意の理由を3Dで確かめよう。">
+<meta name="twitter:image" content="https://kaname-chemistry.github.io/baking-soda-decomposition-3d/ogp.jpg">
+<link rel="icon" href="data:,">
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#c7cfd6;color:#132331;
+    font-family:system-ui,-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+  .glass{position:fixed;background:rgba(244,248,252,.5);
+    -webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);
+    border:1px solid rgba(255,255,255,.72);border-radius:16px;
+    box-shadow:0 10px 32px rgba(14,30,48,.2),inset 0 1px 0 rgba(255,255,255,.85)}
+  #hud{top:max(12px,env(safe-area-inset-top));right:12px;width:292px;padding:12px;box-sizing:border-box}
+  .cap{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#56707f;font-weight:600}
+  .big{display:flex;align-items:baseline;gap:8px;margin:2px 0 4px}
+  #mass{font-size:26px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1.1}
+  #mass small,.rd .v small{font-size:12px;font-weight:600;color:#4c6474;margin-left:2px}
+  #conv{margin-left:auto;font-size:12px;font-weight:650;color:#30495a;font-variant-numeric:tabular-nums}
+  .bar{height:6px;border-radius:4px;background:rgba(20,50,70,.12);overflow:hidden;margin-bottom:8px}
+  .bar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#2d6d8a,#5fb0c9);border-radius:4px}
+  #eq{font-size:12.5px;font-weight:600;color:#203848;margin:2px 0 8px;letter-spacing:.01em}
+  #eq span{transition:color .3s}
+  #eq .lit{color:#c0561c}
+  .reads{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:3px 0 9px}
+  .rd .k{font-size:9.5px;color:#56707f;font-weight:650;letter-spacing:.05em;text-transform:uppercase}
+  .rd .v{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+  .obs{display:flex;align-items:center;gap:10px;margin:3px 0 9px}
+  #chip{width:34px;height:34px;border-radius:9px;flex:none;border:1px solid rgba(10,20,30,.3);
+    background:linear-gradient(180deg,#e9f3f7,#d5e6ee);transition:background .3s}
+  #lname{font-size:14px;font-weight:650;line-height:1.2}
+  #lnote{font-size:11px;color:#56707f;margin-top:2px}
+  #log{list-style:none;margin:4px 0 0;padding:0;max-height:150px;overflow:hidden;font-size:12px}
+  #log li{display:flex;align-items:center;gap:7px;padding:4px 0;border-top:1px solid rgba(30,60,80,.1);line-height:1.3}
+  #log li i{width:9px;height:9px;border-radius:3px;flex:none;border:1px solid rgba(0,0,0,.2)}
+  #log li em{font-style:normal;margin-left:auto;font-size:10px;font-weight:700;color:#9a3b12;background:rgba(230,120,40,.16);
+    border:1px solid rgba(200,90,30,.35);padding:1px 5px;border-radius:5px;letter-spacing:.03em;flex:none}
+  #log li.ok em{color:#1d6b3c;background:rgba(60,170,100,.14);border-color:rgba(40,140,80,.35)}
+  #log li.sys{color:#5d7483}
+  #log .empty{color:#6a8090}
+  #safe{margin-top:8px;font-size:10px;color:#5b7383;line-height:1.35}
+  #ctrl{left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));
+    width:min(700px,calc(100vw - 24px));box-sizing:border-box;padding:10px 12px}
+  .row{display:flex;gap:7px;align-items:center}
+  .row+.row{margin-top:8px}
+  .row>button{flex:1}
+  button{font:inherit;font-size:13px;font-weight:600;color:#14303f;background:rgba(255,255,255,.74);
+    border:1px solid rgba(20,50,70,.22);border-radius:10px;padding:8px 10px;cursor:pointer;transition:background .15s,transform .08s}
+  button:hover{background:rgba(255,255,255,.96)} button:active{transform:scale(.97)}
+  button.primary{background:#1d6f8f;color:#fff;border-color:#165a74}
+  button.primary.lit{background:#b8482e;border-color:#963a24}
+  button.on{background:#14303f;color:#fff;border-color:#14303f}
+  .seg{display:flex;flex:1;border:1px solid rgba(20,50,70,.22);border-radius:10px;overflow:hidden}
+  .seg button{flex:1;border:0;border-radius:0;background:rgba(255,255,255,.5);font-weight:550;font-size:12.5px}
+  .seg button+button{border-left:1px solid rgba(20,50,70,.14)}
+  .seg button.on{background:#14303f;color:#fff}
+  .seg button.bad.on{background:#9a3b22}
+  .lbl{font-size:12px;font-weight:600;color:#30495a;white-space:nowrap}
+  #hint{position:fixed;left:12px;top:max(12px,env(safe-area-inset-top));font-size:11.5px;color:#36505f;
+    background:rgba(255,255,255,.42);padding:6px 9px;border-radius:9px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:170px;background:rgba(18,32,44,.86);color:#fff;font-size:13px;
+    padding:8px 13px;border-radius:10px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:min(560px,calc(100vw - 40px));text-align:center;line-height:1.35}
+  #toast.warn{background:rgba(150,36,20,.92)}
+  @media (max-width:640px){
+    #hud{width:196px;padding:9px;right:8px;top:max(8px,env(safe-area-inset-top))}
+    #mass{font-size:19px} #conv{font-size:11px} .bar{margin-bottom:5px}
+    #eq,#lnote,.rd .k.x,#hint{display:none}
+    .reads{grid-template-columns:1fr 1fr;gap:3px;margin-bottom:5px} .rd.x{display:none} .rd .v{font-size:13.5px}
+    #chip{width:24px;height:24px} #lname{font-size:12px} .obs{margin-bottom:5px} .cap{font-size:9px}
+    #log{max-height:40px;font-size:10.5px} #log li{padding:2px 0} #safe{font-size:9px;margin-top:4px}
+    #ctrl{padding:8px;bottom:max(8px,env(safe-area-inset-bottom))}
+    button{font-size:12px;padding:8px 5px} .seg button{font-size:11px;padding:8px 3px} .lbl{display:none}
+    #toast{bottom:190px;font-size:12px}
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hint">ドラッグで回転 · ホイール / ピンチで拡大</div>
+
+<div id="hud" class="glass">
+  <div class="cap">加熱している試験管の固体</div>
+  <div class="big"><div id="mass">2.00<small>g</small></div><div id="conv">分解 0%</div></div>
+  <div class="bar"><b id="convBar"></b></div>
+  <div id="eq"><span id="e0">2NaHCO₃</span> → <span id="e1">Na₂CO₃</span> + <span id="e2">H₂O</span> + <span id="e3">CO₂</span></div>
+  <div class="reads">
+    <div class="rd"><div class="k">底の温度</div><div class="v" id="temp">25<small>°C</small></div></div>
+    <div class="rd"><div class="k">CO₂（25 °C）</div><div class="v" id="co2">0<small>mL</small></div></div>
+    <div class="rd x"><div class="k x">水</div><div class="v" id="h2o">0.00<small>g</small></div></div>
+  </div>
+  <div class="cap">石灰水</div>
+  <div class="obs"><div id="chip"></div><div><div id="lname">無色透明</div><div id="lnote">Ca(OH)₂ 水溶液</div></div></div>
+  <div class="cap">記録</div>
+  <ul id="log"><li class="empty">ガスバーナーに火をつけて加熱を始めよう</li></ul>
+  <div id="safe">これはシミュレーションです。実際の実験は必ず先生の指導のもとで行ってください。</div>
+</div>
+
+<div id="ctrl" class="glass">
+  <div class="row">
+    <button id="bBurn" class="primary">火をつける</button>
+    <button id="bLift">ガラス管を抜く</button>
+    <button id="bReset">やり直す</button>
+  </div>
+  <div class="row">
+    <span class="lbl">試験管の向き</span>
+    <div class="seg" id="tilt">
+      <button data-t="down" class="on">口を下げる</button><button data-t="level" class="bad">水平</button><button data-t="up" class="bad">口を上げる</button>
+    </div>
+  </div>
+  <div class="row">
+    <button id="bCo">塩化コバルト紙</button>
+    <button id="bPh">フェノールフタレイン</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+/* ================================================================
+   Chemistry constants  (2 NaHCO3 -> Na2CO3 + H2O + CO2)
+   ================================================================ */
+const M = { NaHCO3: 84.01, Na2CO3: 105.99, H2O: 18.02, CO2: 44.01 };
+const SAMPLE_G = 2.00;
+const N0 = SAMPLE_G / M.NaHCO3;          // 0.02381 mol
+const VM = 24500;                         // mL/mol, 25 °C, 1 atm
+const LIME_CAP = 2.3e-4;                  // mol Ca(OH)2 in ~10 mL saturated lime water
+const ABSORB = 0.02;                      // fraction of CO2 bubbles actually absorbed
+const T_ROOM = 25, T_HOT = 260;
+const CRACK_T = 150;                      // liquid water on glass hotter than this -> thermal shock
+
+/* ================================================================
+   Renderer, scene, camera
+   ================================================================ */
+const srgb = (r, g, b) => new THREE.Color().setRGB(r, g, b, THREE.SRGBColorSpace);
+const isMobile = matchMedia('(pointer:coarse)').matches || Math.min(innerWidth, innerHeight) < 600;
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.75 : 2));
+renderer.setSize(innerWidth, innerHeight, false);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+
+const scene = new THREE.Scene();
+scene.background = srgb(0.79, 0.83, 0.86);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.3, 500);
+scene.add(camera);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.minDistance = 8; controls.maxDistance = 150; controls.maxPolarAngle = 1.52; controls.minPolarAngle = 0.1;
+function frameCamera() {
+  const a = innerWidth / innerHeight;
+  const dist = a < 1 ? 42 / Math.pow(a, 0.8) : 50;
+  controls.target.set(a < 1 ? -8.5 : -2.5, a < 1 ? 12 : 10.5, 1);
+  camera.position.copy(controls.target).addScaledVector(new THREE.Vector3(0.12, 0.33, 0.94).normalize(), dist);
+  controls.update();
+}
+frameCamera();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x7b838a, 0.95));
+const sun = new THREE.DirectionalLight(0xfff8ee, 2.2);
+sun.position.set(26, 70, 36); sun.target.position.set(-6, 0, 0);
+sun.castShadow = true;
+sun.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
+Object.assign(sun.shadow.camera, { left: -45, right: 40, top: 40, bottom: -36, near: 20, far: 160 });
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04; sun.shadow.radius = 4;
+scene.add(sun, sun.target);
+const fillL = new THREE.DirectionalLight(0xe6efff, 0.55); fillL.position.set(-36, 26, 24); scene.add(fillL);
+const flameLight = new THREE.PointLight(0x6688ff, 0, 0, 2); flameLight.position.set(0, 17, 0); scene.add(flameLight);
+
+/* ---------- helpers ---------- */
+const V2 = (x, y) => new THREE.Vector2(x, y);
+function tex(w, h, draw, o = {}) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  if (o.srgb !== false) t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = ANISO;
+  if (o.rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(o.rep[0], o.rep[1]); }
+  return t;
+}
+function add(geo, mat, o = {}) {
+  const m = new THREE.Mesh(geo, mat);
+  if (o.p) m.position.set(...o.p);
+  if (o.r) m.rotation.set(...o.r);
+  if (o.s) m.scale.set(...o.s);
+  m.castShadow = !!o.cast; m.receiveShadow = !!o.recv;
+  if (o.ro !== undefined) m.renderOrder = o.ro;
+  (o.to || scene).add(m);
+  return m;
+}
+function glass(o = {}) {
+  const m = new THREE.MeshPhysicalMaterial({ color: o.color ?? 0xffffff, roughness: 0.04, metalness: 0, ior: 1.5,
+    transparent: true, opacity: o.op ?? 0.12, depthWrite: false, side: THREE.DoubleSide, envMapIntensity: o.env ?? 1.6 });
+  const k = (o.edge ?? 0.5).toFixed(2);
+  m.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader.replace('#include <opaque_fragment>',
+      `{ float e = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));
+         e = e * e * e; diffuseColor.a = clamp(diffuseColor.a + e * ${k}, 0.0, 0.9); outgoingLight += vec3(e * 0.05); }
+       #include <opaque_fragment>`);
+  };
+  m.customProgramCacheKey = () => 'g' + k;
+  return m;
+}
+// test tube lathe: round bottom at y=0, open rim at y=L
+function tubeGeo(R, L, wall = 0.08, seg = 40) {
+  const pts = [];
+  for (let i = 0; i <= 10; i++) { const a = -Math.PI / 2 + (i / 10) * Math.PI / 2; pts.push(V2(R * Math.cos(a), R + R * Math.sin(a))); }
+  pts.push(V2(R, L), V2(R + 0.06, L + 0.04), V2(R - wall, L + 0.02));
+  const ri = R - wall;
+  pts.push(V2(ri, L));
+  for (let i = 10; i >= 0; i--) { const a = -Math.PI / 2 + (i / 10) * Math.PI / 2; pts.push(V2(ri * Math.cos(a), R + ri * Math.sin(a))); }
+  return new THREE.LatheGeometry(pts, seg);
+}
+function label(text, sub, w = 256, h = 128, band = '#3d5566') {
+  return tex(w, h, (g) => {
+    g.fillStyle = '#fbfaf6'; g.fillRect(0, 0, w, h);
+    g.fillStyle = band; g.fillRect(0, 0, w, 14);
+    g.fillStyle = '#111a21'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.font = `800 ${Math.min(44, Math.floor(w * 1.5 / Math.max(4, text.length)))}px system-ui,"Hiragino Sans","Noto Sans JP",IPAPGothic,sans-serif`; g.fillText(text, w / 2, 60);
+    g.font = '500 18px system-ui,"Hiragino Sans","Noto Sans JP",IPAPGothic,sans-serif'; g.fillStyle = '#4b5e6b'; g.fillText(sub, w / 2, 104);
+  });
+}
+const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const clamp01 = (x) => Math.max(0, Math.min(1, x));
+
+/* ================================================================
+   Room
+   ================================================================ */
+const benchMap = tex(512, 512, (g, w, h) => {
+  g.fillStyle = '#3b4044'; g.fillRect(0, 0, w, h);
+  const im = g.getImageData(0, 0, w, h), d = im.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - 0.5) * 16; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+  g.putImageData(im, 0, 0);
+}, { rep: [5, 2.5] });
+add(new THREE.BoxGeometry(140, 4, 60), new THREE.MeshStandardMaterial({ map: benchMap, roughness: 0.94, envMapIntensity: 0.45 }), { p: [-4, -2, -4], recv: true });
+const wallMap = tex(512, 512, (g, w, h) => {
+  g.fillStyle = '#c1c9cf'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
+    const v = 230 + ((i * 7 + j * 3) % 9); g.fillStyle = `rgb(${v - 3},${v + 1},${v + 4})`;
+    g.fillRect(i * 128 + 3, j * 128 + 3, 122, 122);
+  }
+}, { rep: [12, 6] });
+add(new THREE.PlaneGeometry(140, 70), new THREE.MeshStandardMaterial({ map: wallMap, roughness: 0.55, envMapIntensity: 0.6 }), { p: [-4, 35, -34], recv: true });
+
+/* ================================================================
+   Bunsen burner + gas tap
+   ================================================================ */
+const brass = new THREE.MeshStandardMaterial({ color: 0xc9a25a, metalness: 1, roughness: 0.32 });
+const chrome = new THREE.MeshStandardMaterial({ color: 0xd2d6da, metalness: 1, roughness: 0.22 });
+const castIron = new THREE.MeshStandardMaterial({ color: 0x2d3338, metalness: 0.4, roughness: 0.55 });
+const BURNER_TOP = 13;
+add(new THREE.LatheGeometry([V2(0, 0), V2(4.3, 0), V2(4.4, 0.25), V2(4.1, 0.6), V2(2.2, 1.1), V2(1.1, 1.7), V2(0.95, 2.1), V2(0, 2.1)], 48), castIron, { cast: true, recv: true });
+add(new THREE.CylinderGeometry(0.62, 0.62, BURNER_TOP - 2.1, 32, 1, true), brass, { p: [0, 2.1 + (BURNER_TOP - 2.1) / 2, 0], cast: true });
+add(new THREE.TorusGeometry(0.62, 0.06, 8, 32), brass, { p: [0, BURNER_TOP, 0], r: [Math.PI / 2, 0, 0] });
+add(new THREE.CylinderGeometry(0.56, 0.56, 0.3, 24, 1, true), new THREE.MeshStandardMaterial({ color: 0x1a1410, roughness: 0.9, side: THREE.BackSide }), { p: [0, BURNER_TOP - 0.15, 0] });
+const collar = add(new THREE.CylinderGeometry(0.78, 0.78, 1.6, 32), brass, { p: [0, 3.3, 0], cast: true });
+add(new THREE.CircleGeometry(0.32, 20), new THREE.MeshStandardMaterial({ color: 0x15110c, roughness: 1 }), { p: [0.22, 0, 0.75], r: [0, 0.28, 0], to: collar });
+const INLET_DIR = new THREE.Vector3(0.8, 0, -0.6).normalize();
+const inlet = new THREE.Group(); inlet.position.set(1.0, 1.25, -0.75); inlet.rotation.y = Math.atan2(INLET_DIR.x, INLET_DIR.z); scene.add(inlet);
+add(new THREE.CylinderGeometry(0.32, 0.32, 2.4, 16), brass, { p: [0, 0, 1.2], r: [Math.PI / 2, 0, 0], to: inlet, cast: true });
+for (let i = 0; i < 3; i++) add(new THREE.CylinderGeometry(0.3, 0.42, 0.35, 16), brass, { p: [0, 0, 1.55 + i * 0.4], r: [Math.PI / 2, 0, 0], to: inlet });
+const inletEnd = new THREE.Vector3(); inlet.updateMatrixWorld(); inlet.localToWorld(inletEnd.set(0, 0, 2.2));
+const TAP = new THREE.Vector3(17, 0, -18);
+add(new RoundedBoxGeometry(5, 9, 5, 2, 0.5), new THREE.MeshStandardMaterial({ color: 0xd8dde0, roughness: 0.6 }), { p: [TAP.x, 4.5, TAP.z], cast: true, recv: true });
+add(new THREE.CylinderGeometry(0.5, 0.5, 2.6, 16), chrome, { p: [TAP.x, 6.4, TAP.z + 3.6], r: [Math.PI / 2, 0, 0], cast: true });
+add(new THREE.SphereGeometry(0.95, 20, 14), chrome, { p: [TAP.x, 6.4, TAP.z + 4.2], cast: true });
+const nozzle = new THREE.Group(); nozzle.position.set(TAP.x, 6.4, TAP.z + 4.2); nozzle.rotation.x = 0.9; scene.add(nozzle);
+add(new THREE.CylinderGeometry(0.3, 0.3, 2.2, 14), chrome, { p: [0, -1.4, 0], to: nozzle, cast: true });
+for (let i = 0; i < 3; i++) add(new THREE.CylinderGeometry(0.28, 0.4, 0.32, 14), chrome, { p: [0, -1.5 - i * 0.38, 0], to: nozzle });
+const lever = new THREE.Group(); lever.position.set(TAP.x, 7.35, TAP.z + 4.2); scene.add(lever);
+add(new RoundedBoxGeometry(0.6, 0.45, 4.4, 2, 0.15), new THREE.MeshStandardMaterial({ color: 0xe0a41c, roughness: 0.45 }), { p: [0, 0, 1.6], to: lever, cast: true });
+add(new THREE.CylinderGeometry(0.45, 0.45, 0.4, 16), chrome, { p: [0, -0.25, 0], to: lever });
+const nozEnd = new THREE.Vector3(); nozzle.updateMatrixWorld(); nozzle.localToWorld(nozEnd.set(0, -2.4, 0));
+const gasCurve = new THREE.CatmullRomCurve3([
+  nozEnd.clone(), nozEnd.clone().add(new THREE.Vector3(-0.2, -1.6, 1.2)), new THREE.Vector3(13.5, 0.55, -9),
+  new THREE.Vector3(8, 0.55, -6.5), inletEnd.clone().add(INLET_DIR.clone().multiplyScalar(1.6)).setY(1.1), inletEnd.clone()
+]);
+add(new THREE.TubeGeometry(gasCurve, 100, 0.48, 14), new THREE.MeshStandardMaterial({ color: 0xb4581f, roughness: 0.62 }), { cast: true, recv: true });
+
+/* ================================================================
+   Flame (layered additive cones, from the flame-test bench)
+   ================================================================ */
+const flameVS = `
+  uniform float uTime, uFlick; varying float vH; varying vec3 vN; varying vec3 vV;
+  void main(){
+    vec3 p = position; float h = uv.y;
+    float sway = sin(uTime*10.7 + h*5.0)*0.55 + sin(uTime*17.9 + h*9.0)*0.3;
+    p.x += sway * uFlick * h * h;
+    p.z += cos(uTime*12.3 + h*6.5) * 0.45 * uFlick * h * h;
+    p.xz *= 1.0 + 0.045 * sin(uTime*24.0 + h*13.0);
+    vH = h;
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz);
+    gl_Position = projectionMatrix * mv;
+  }`;
+const flameFS = `
+  uniform vec3 uColor; uniform float uInt, uKind;
+  varying float vH; varying vec3 vN; varying vec3 vV;
+  void main(){
+    float f = abs(dot(normalize(vN), normalize(vV)));
+    float a;
+    if (uKind < 0.5) a = pow(f, 1.4) * smoothstep(0.0, 0.1, vH) * (1.0 - smoothstep(0.55, 1.0, vH));
+    else a = (pow(1.0 - f, 1.6) * 1.2 + 0.25) * smoothstep(0.0, 0.06, vH) * (1.0 - smoothstep(0.7, 1.0, vH));
+    gl_FragColor = vec4(uColor, clamp(a * uInt, 0.0, 1.0));
+  }`;
+function flameMat(kind, color) {
+  return new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uFlick: { value: 0.3 }, uColor: { value: color.clone() }, uInt: { value: 0 }, uKind: { value: kind } },
+    vertexShader: flameVS, fragmentShader: flameFS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    side: kind === 1 ? THREE.DoubleSide : THREE.FrontSide, toneMapped: false
+  });
+}
+const lathe = (pts, H) => new THREE.LatheGeometry(pts.map(([r, h]) => V2(r, h * H)), 36);
+const flameOuter = add(lathe([[0.58, 0], [0.82, 0.1], [0.96, 0.28], [0.86, 0.55], [0.55, 0.8], [0.22, 0.93], [0.02, 1]], 9.5), flameMat(0, srgb(0.28, 0.36, 1.0)), { p: [0, BURNER_TOP, 0], ro: 10 });
+const flameInner = add(lathe([[0.52, 0], [0.47, 0.25], [0.33, 0.6], [0.14, 0.88], [0.01, 1]], 3.4), flameMat(1, srgb(0.35, 0.72, 1.0)), { p: [0, BURNER_TOP, 0], ro: 11 });
+const glowTex = tex(128, 128, (g, w, h) => {
+  const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(255,255,255,.45)'); gr.addColorStop(0.6, 'rgba(255,255,255,.1)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, w, h);
+});
+const glowMat = new THREE.SpriteMaterial({ map: glowTex, color: 0x4466ff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, opacity: 0 });
+const glow = new THREE.Sprite(glowMat); glow.position.set(0, BURNER_TOP + 3.5, 0); glow.scale.set(9, 12, 1); glow.renderOrder = 13; scene.add(glow);
+
+/* ================================================================
+   Ring stand + clamp + heated test tube (group origin = clamp)
+   Local +x points to the tube bottom; mouth at x = -4, bottom at x = +12.
+   ================================================================ */
+const C = new THREE.Vector3(-10, 19.2, 0);
+const ROD_Z = -5;
+add(new RoundedBoxGeometry(9, 0.8, 6, 2, 0.25), castIron, { p: [C.x, 0.4, ROD_Z - 0.5], cast: true, recv: true });
+add(new THREE.CylinderGeometry(0.35, 0.35, 30, 16), chrome, { p: [C.x, 15, ROD_Z], cast: true });
+add(new RoundedBoxGeometry(1.6, 1.6, 1.6, 2, 0.25), castIron, { p: [C.x, C.y, ROD_Z], cast: true });
+add(new THREE.CylinderGeometry(0.22, 0.22, 1.2, 12), chrome, { p: [C.x + 1.2, C.y, ROD_Z], r: [0, 0, Math.PI / 2] });
+
+const TR = 1.2, TL = 16, MOUTH_X = -4, BOTTOM_X = 12;
+const tube = new THREE.Group(); tube.position.copy(C); scene.add(tube);
+const tg = tubeGeo(TR, TL); tg.rotateZ(Math.PI / 2); tg.translate(BOTTOM_X, 0, 0);
+const tubeMat = glass({ op: 0.13, edge: 0.55 });
+add(tg, tubeMat, { to: tube, ro: 6 });
+// clamp jaws + arm
+const clampMat = new THREE.MeshStandardMaterial({ color: 0x8a949c, metalness: 0.7, roughness: 0.4 });
+const corkMat = new THREE.MeshStandardMaterial({ color: 0xb8925e, roughness: 0.9 });
+add(new THREE.CylinderGeometry(0.2, 0.2, Math.abs(ROD_Z) - 1.4, 12), chrome, { p: [0, 0, ROD_Z / 2 - 0.7], r: [Math.PI / 2, 0, 0], to: tube, cast: true });
+for (const s of [1, -1]) {
+  add(new RoundedBoxGeometry(1.8, 0.5, 2.8, 2, 0.15), clampMat, { p: [0, s * (TR + 0.38), -0.4], to: tube, cast: true });
+  add(new RoundedBoxGeometry(1.6, 0.25, 2.4, 2, 0.1), corkMat, { p: [0, s * (TR + 0.1), -0.2], to: tube });
+}
+add(new THREE.CylinderGeometry(0.12, 0.12, 3.6, 10), clampMat, { p: [0.6, 0, -1.6], to: tube });
+// rubber stopper + glass outlet
+const stopMat = new THREE.MeshStandardMaterial({ color: 0x2b2d30, roughness: 0.75 });
+add(new THREE.CylinderGeometry(1.25, 1.1, 1.8, 28), stopMat, { p: [MOUTH_X - 0.25, 0, 0], r: [0, 0, Math.PI / 2], to: tube, cast: true });
+const outGlass = glass({ op: 0.42, edge: 1.0, color: 0xe6f2ef });
+add(new THREE.CylinderGeometry(0.25, 0.25, 3.0, 14, 1, true), outGlass, { p: [MOUTH_X - 1.2, 0, 0], r: [0, 0, Math.PI / 2], to: tube, ro: 7 });
+const OUTLET_LOCAL = new THREE.Vector3(MOUTH_X - 1.6, 0, 0);
+// powder lump on the lower inner wall near the bottom
+const POW_X = 9.4;
+const powderMat = new THREE.MeshStandardMaterial({ color: 0xf6f6f2, roughness: 1, envMapIntensity: 0.6 });
+const powder = add(new THREE.SphereGeometry(1, 24, 12), powderMat, { p: [POW_X, -TR + 0.45, 0], s: [2.0, 0.42, 0.9], to: tube, cast: true });
+// crack lines (hidden until broken)
+const crack = new THREE.Group(); crack.visible = false; tube.add(crack);
+{
+  const pts = [];
+  let s = 7;
+  const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  for (let k = 0; k < 10; k++) {
+    let x = 8.4 + rnd() * 2.4, a = -Math.PI / 2 + (rnd() - 0.5) * 3.2;
+    for (let j = 0; j < 7; j++) {
+      const nx = x + (rnd() - 0.3) * 0.9, na = a + (rnd() - 0.5) * 0.5;
+      const r = TR + 0.02;
+      pts.push(new THREE.Vector3(x, r * Math.sin(a), r * Math.cos(a)), new THREE.Vector3(nx, r * Math.sin(na), r * Math.cos(na)));
+      x = nx; a = na;
+    }
+  }
+  crack.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x2a3138, transparent: true, opacity: 0.9 })));
+}
+// condensed water droplets on the inner wall near the (cooler) mouth
+const waterMat = new THREE.MeshPhysicalMaterial({ color: 0xdff0ff, roughness: 0.02, transmission: 0, transparent: true, opacity: 0.55, envMapIntensity: 2.2 });
+const ND = 46;
+const drops = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 10, 8), waterMat, ND); drops.count = 0; drops.renderOrder = 7; tube.add(drops);
+const dropPos = [];
+{
+  let s = 3; const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  for (let i = 0; i < ND; i++) {
+    const x = MOUTH_X + 0.8 + Math.pow(rnd(), 1.6) * 6.2, a = rnd() * Math.PI * 2, r = TR - 0.1;
+    dropPos.push({ x, y: r * Math.sin(a), z: r * Math.cos(a), s: 0.06 + rnd() * 0.08 });
+  }
+}
+const pool = add(new THREE.SphereGeometry(1, 16, 10), waterMat, { p: [MOUTH_X + 0.9, -TR + 0.12, 0], s: [0.01, 0.01, 0.01], to: tube, ro: 7 });
+const runDrop = add(new THREE.SphereGeometry(1, 14, 10), waterMat, { s: [0.75, 0.24, 0.55], to: tube, ro: 7 });
+runDrop.visible = false;
+// CoCl2 paper strip (appears at the mouth during the test)
+const coPaperMat = new THREE.MeshStandardMaterial({ color: 0x2b55c9, roughness: 0.9, side: THREE.DoubleSide });
+const coPaper = add(new THREE.PlaneGeometry(0.7, 2.6), coPaperMat, { p: [MOUTH_X + 0.3, -TR - 1.0, 1.0], r: [0, 0.3, 0], to: tube, cast: true });
+coPaper.visible = false;
+
+/* ================================================================
+   Lime water tube in a rack + delivery tube + rubber tubing
+   ================================================================ */
+const wood = new THREE.MeshStandardMaterial({ color: 0x9c6f45, roughness: 0.85 });
+function rack(x, z, holes, w, d = 4, h = 6) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  add(new RoundedBoxGeometry(w, 0.6, d, 2, 0.15), wood, { p: [0, 0.3, 0], to: g, cast: true, recv: true });
+  for (const sx of [-1, 1]) add(new RoundedBoxGeometry(0.5, h, d, 2, 0.12), wood, { p: [sx * (w / 2 - 0.25), h / 2, 0], to: g, cast: true, recv: true });
+  const sh = new THREE.Shape(); sh.moveTo(-w / 2, -d / 2); sh.lineTo(w / 2, -d / 2); sh.lineTo(w / 2, d / 2); sh.lineTo(-w / 2, d / 2); sh.closePath();
+  for (const [hx, hr] of holes) { const p = new THREE.Path(); p.absarc(hx, 0, hr, 0, Math.PI * 2, true); sh.holes.push(p); }
+  const top = new THREE.ExtrudeGeometry(sh, { depth: 0.5, bevelEnabled: false, curveSegments: 28 });
+  top.rotateX(-Math.PI / 2);
+  add(top, wood, { p: [0, h - 0.5, 0], to: g, cast: true, recv: true });
+  return g;
+}
+const LIME = new THREE.Vector3(-18, 0, 2.5);
+const LR = 1.05, LL = 13, L_BOTTOM = 0.8, LIME_LEVEL = 8.0;
+rack(LIME.x, LIME.z, [[0, LR + 0.12]], 4.6, 4, 3.2);
+const ltg = tubeGeo(LR, LL, 0.07); ltg.translate(0, L_BOTTOM, 0);
+add(ltg, glass({ op: 0.12 }), { p: [LIME.x, 0, LIME.z], ro: 6 });
+const limeMat = new THREE.MeshStandardMaterial({ color: 0xe4f1f6, roughness: 0.15, transparent: true, opacity: 0.28, depthWrite: false, envMapIntensity: 1.2 });
+// liquid: cylinder body + rounded bottom, rebuilt by scaling a unit-height column
+const limeBody = add(new THREE.CylinderGeometry(LR - 0.09, LR - 0.09, 1, 32), limeMat, { p: [LIME.x, 0, LIME.z], ro: 3 });
+const limeBot = add(new THREE.SphereGeometry(LR - 0.09, 32, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), limeMat, { p: [LIME.x, L_BOTTOM + LR, LIME.z], ro: 3 });
+const limeTop = add(new THREE.CircleGeometry(LR - 0.09, 32), limeMat, { r: [-Math.PI / 2, 0, 0], ro: 3 });
+function setLimeLevel(y) {
+  const y0 = L_BOTTOM + LR;
+  limeBody.scale.y = Math.max(0.01, y - y0); limeBody.position.y = y0 + (y - y0) / 2;
+  limeTop.position.set(LIME.x, y, LIME.z);
+}
+setLimeLevel(LIME_LEVEL);
+const limeLabel = add(new THREE.PlaneGeometry(2.8, 1.4), new THREE.MeshStandardMaterial({ map: label('石灰水', 'Ca(OH)₂ aq'), roughness: 0.8 }), { p: [LIME.x, 1.85, LIME.z + 2.04] });
+// delivery glass tube (moves up when lifted)
+const DIP_LEN = 15, DIP_Y0 = 2.6, LIFT_H = 7;
+const dip = new THREE.Group(); dip.position.set(LIME.x, 0, LIME.z); scene.add(dip);
+add(new THREE.CylinderGeometry(0.26, 0.26, DIP_LEN, 14, 1, true), outGlass, { p: [0, DIP_Y0 + DIP_LEN / 2, 0], to: dip, ro: 7 });
+const suckCol = add(new THREE.CylinderGeometry(0.19, 0.19, 1, 12), limeMat, { to: dip, ro: 4 });
+suckCol.visible = false;
+// rubber tubing (rebuilt when the tube tilts or the delivery tube moves)
+const rubberMat = new THREE.MeshStandardMaterial({ color: 0xb4581f, roughness: 0.62 });
+let rubber = null;
+const tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3();
+function rebuildRubber() {
+  tube.updateMatrixWorld(); tube.localToWorld(tmpA.copy(OUTLET_LOCAL));
+  tmpB.set(LIME.x, dip.position.y + DIP_Y0 + DIP_LEN - 0.2, LIME.z);
+  const dirA = new THREE.Vector3(-1, 0, 0).applyQuaternion(tube.quaternion);
+  const curve = new THREE.CatmullRomCurve3([
+    tmpA.clone(), tmpA.clone().addScaledVector(dirA, 1.2).add(new THREE.Vector3(0, 0.5, 0.5)),
+    tmpB.clone().add(new THREE.Vector3(0.6, 1.6, -0.4)), tmpB.clone()
+  ]);
+  if (rubber) { rubber.geometry.dispose(); scene.remove(rubber); }
+  rubber = add(new THREE.TubeGeometry(curve, 60, 0.42, 12), rubberMat, { cast: true, recv: true });
+}
+// bubbles in lime water
+const NB = 40;
+const bubMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.05, transparent: true, opacity: 0.5, envMapIntensity: 2.5, depthWrite: false });
+const bubbles = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 10, 8), bubMat, NB); bubbles.renderOrder = 5; bubbles.frustumCulled = false; scene.add(bubbles);
+const bub = Array.from({ length: NB }, () => ({ on: false, x: 0, y: 0, z: 0, v: 0, r: 0, ph: 0 }));
+
+/* ================================================================
+   Phenolphthalein comparison tubes
+   ================================================================ */
+const PH = new THREE.Vector3(11, 0, 5);
+const PR = 0.75, PL = 8.5;
+rack(PH.x, PH.z, [[-1.4, PR + 0.1], [1.4, PR + 0.1]], 6.2, 3.2, 4.6);
+const phLiq = [];
+for (const [i, dx] of [[0, -1.4], [1, 1.4]]) {
+  const g = tubeGeo(PR, PL, 0.06, 28); g.translate(0, 0.7, 0);
+  add(g, glass({ op: 0.12 }), { p: [PH.x + dx, 0, PH.z], ro: 6 });
+  const m = new THREE.MeshStandardMaterial({ color: 0xf2f7f9, roughness: 0.15, transparent: true, opacity: 0.0, depthWrite: false });
+  const body = add(new THREE.CylinderGeometry(PR - 0.07, PR - 0.07, 1, 24), m, { p: [PH.x + dx, 0, PH.z], ro: 3 });
+  const bot = add(new THREE.SphereGeometry(PR - 0.07, 24, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), m, { p: [PH.x + dx, 0.7 + PR, PH.z], ro: 3 });
+  phLiq.push({ m, body, bot, fill: 0, target: 0, col: new THREE.Color(0xf2f7f9), toCol: new THREE.Color(0xf2f7f9) });
+  const lt = label(i === 0 ? 'NaHCO₃' : '加熱後', i === 0 ? '加熱前' : '残った固体', 256, 128, i === 0 ? '#3d5566' : '#c0561c');
+  add(new THREE.PlaneGeometry(2.4, 1.2), new THREE.MeshStandardMaterial({ map: lt, roughness: 0.8 }), { p: [PH.x + dx, 5.4, PH.z + 1.75], r: [-0.25, 0, 0] });
+}
+function setPhFill(p) {
+  const y0 = 0.7 + PR, h = 3.6 * p.fill;
+  p.body.scale.y = Math.max(0.01, h); p.body.position.y = y0 + h / 2;
+  p.body.visible = p.bot.visible = p.fill > 0.01;
+}
+phLiq.forEach(setPhFill);
+// sample bottle label card in front of the burner
+add(new THREE.PlaneGeometry(3.6, 1.8), new THREE.MeshStandardMaterial({ map: label('NaHCO₃ 2.00 g', '炭酸水素ナトリウム', 320, 128), roughness: 0.8 }), { p: [-6.5, 0.9, 7.5], r: [-1.1, 0, 0], recv: true });
+
+/* ================================================================
+   State
+   ================================================================ */
+const TILT = { down: 0.1, level: 0, up: -0.26 };
+function fresh() {
+  return {
+    t: 0, burner: false, flameI: 0, T: T_ROOM, Tprev: T_ROOM, Tmax: T_ROOM,
+    n: N0, co2mL: 0, h2oMade: 0, cond: 0, absorbed: 0, turb: 0, flow: 0,
+    tilt: 'down', theta: TILT.down, lift: 0, liftTarget: 0, dipped: true,
+    suck: 0, suckT: 0, sucking: false, run: null, broken: null,
+    co: null, phDone: false, flags: {}, paused: false
+  };
+}
+let S = fresh();
+const conv = () => 1 - S.n / N0;
+const massSolid = () => S.n * M.NaHCO3 + (N0 - S.n) / 2 * M.Na2CO3;
+const downhill = () => S.theta < -0.03 ? 'bottom' : S.theta > 0.03 ? 'mouth' : 'level';
+
+/* ================================================================
+   Simulation step
+   ================================================================ */
+function crackTube(reason) {
+  if (S.broken) return;
+  S.broken = reason; S.burner = false; crack.visible = true;
+  tubeMat.color.set(0xd9b8ac); tubeMat.opacity = 0.2;
+  S.run = null; runDrop.visible = false;
+  logPush(reason, '破損', '#c0392b');
+  toast(reason, true);
+  updateButtons();
+}
+function sim(dt) {
+  S.t += dt;
+  // flame on/off ramp
+  S.flameI += ((S.burner ? 1 : 0) - S.flameI) * (1 - Math.exp(-dt * 6));
+  // temperature of the tube bottom / powder
+  S.Tprev = S.T;
+  if (S.burner) S.T += (T_HOT - S.T) * (1 - Math.exp(-dt / 6));
+  else S.T += (T_ROOM - S.T) * (1 - Math.exp(-dt / 9));
+  S.Tmax = Math.max(S.Tmax, S.T);
+  // decomposition
+  const k = S.T > 80 ? 0.07 * Math.pow((S.T - 80) / 100, 1.5) : 0;
+  const dn = S.n * (1 - Math.exp(-k * dt));
+  S.n -= dn;
+  const gasMol = dn / 2;                    // mol CO2 and mol H2O produced this step
+  S.co2mL += gasMol * VM;
+  const water = gasMol * M.H2O;
+  S.h2oMade += water;
+  S.cond += water * 0.85;                   // most vapour condenses at the cooler mouth
+  // gas leaving the outlet: CO2 + expansion of the air already in the tube (≈30 mL)
+  const expand = Math.max(0, 30 * (S.T - S.Tprev) / (S.T + 273));
+  S.flow = (gasMol * VM + expand) / Math.max(dt, 1e-6);
+  // lift animation
+  S.lift += (S.liftTarget - S.lift) * (1 - Math.exp(-dt * 5));
+  const level = LIME_LEVEL - 1.4 * S.suck;
+  S.dipped = DIP_Y0 + LIFT_H * S.lift < level - 0.2;
+  // lime water absorbs a little of the CO2
+  if (S.dipped && S.suck === 0) {
+    S.absorbed += ABSORB * gasMol;
+    S.turb = Math.min(1, S.absorbed / LIME_CAP);
+    if (!S.flags.air && S.flow > 0.5 && S.co2mL < 3) { S.flags.air = true; logPush('最初の泡は試験管から押し出された空気 — 石灰水はにごらない', '', '#bfe3f2'); }
+    if (!S.flags.milky && S.turb > 0.08) { S.flags.milky = true; logPush('石灰水が白くにごった → 二酸化炭素が発生', 'CO₂', '#f1f1ec', 'ok'); }
+  }
+  if (!S.flags.water && S.cond > 0.015) { S.flags.water = true; logPush('試験管の口付近に液体がついた', '', '#dff0ff'); }
+  if (!S.flags.done && conv() > 0.999) { S.flags.done = true; logPush(`分解完了：2.00 g → ${massSolid().toFixed(2)} g`, '完了', '#f6f6f2', 'ok'); }
+  if (S.burner && !S.dipped && !S.flags.openAir && S.flow > 0.5) { S.flags.openAir = true; logPush('気体は空気中へ — 石灰水では調べていない', '', '#c8d0d6'); }
+
+  // tilt animation (and condensed water flowing)
+  const thT = TILT[S.tilt];
+  const prevTh = S.theta, prevLift = S.lift;
+  S.theta += (thT - S.theta) * (1 - Math.exp(-dt * 4));
+  if (!S.broken) {
+    const dh = downhill();
+    if (!S.run && ((dh === 'bottom' && S.cond > 0.02) || (dh === 'level' && S.cond > 0.06))) {
+      S.run = { x: MOUTH_X + 1.4, amt: S.cond }; S.cond = 0;
+      if (!S.flags.runWarn) { S.flags.runWarn = true; toast('口元で冷えた水が、熱い底のほうへ流れていく！', true); }
+    }
+    if (S.run) {
+      const v = dh === 'bottom' ? 3.2 : dh === 'level' ? 0.8 : -3.2;
+      S.run.x += v * dt;
+      if (S.run.x <= MOUTH_X + 1.2) { S.cond += S.run.amt; S.run = null; logPush('水が口元に戻った', 'セーフ', '#dff0ff', 'ok'); }
+      else if (S.run.x >= POW_X - 2.0) {
+        if (S.T > CRACK_T) crackTube('口元の水が熱い底に流れ戻り、試験管が割れた。試験管の口は底より少し下げよう。');
+        else { logPush('水が粉末まで流れた — まだ割れる温度ではないが、危険な状態', '', '#dff0ff'); S.run = null; }
+      }
+    }
+  }
+  // suck-back: heating stopped while the delivery tube is still in the lime water
+  const cooling = !S.burner && !S.broken && S.dipped && S.Tmax > 60 && S.T > 45;
+  if (cooling || (S.suck > 0 && S.dipped && !S.burner && !S.broken)) {
+    S.suckT += dt;
+    if (S.suckT > 0.6) {
+      if (!S.sucking) { S.sucking = true; toast('石灰水が逆流してくる — ガラス管を抜いて！', true); logPush('気体が冷え、水蒸気が水に戻って試験管内の圧力が下がる', '', '#e4f1f6'); }
+      S.suck = Math.min(1, S.suck + dt / 3.2);
+    }
+    if (S.suck >= 1) crackTube('逆流：冷たい石灰水が熱い試験管に入り、割れた。火を消す前にガラス管を石灰水から抜こう。');
+  } else {
+    S.suckT = 0;
+    if (S.suck > 0) {
+      S.suck = Math.max(0, S.suck - dt / 0.7);
+      if (S.suck === 0 && S.sucking && !S.broken) { S.sucking = false; logPush('間に合った — 石灰水は元に戻った', 'セーフ', '#e4f1f6', 'ok'); }
+    }
+  }
+  if (Math.abs(S.theta - prevTh) > 1e-5 || Math.abs(S.lift - prevLift) > 1e-5 || !rubber) {
+    tube.rotation.z = S.theta; dip.position.y = LIFT_H * S.lift; rebuildRubber();
+  }
+  // CoCl2 paper test animation
+  if (S.co) {
+    S.co.t += dt;
+    const k2 = clamp01((S.co.t - 0.5) / 1.0);
+    coPaperMat.color.copy(new THREE.Color(0x2b55c9)).lerp(new THREE.Color(0xf08fb0), S.co.pink ? k2 : 0);
+    if (S.co.t > 4.5) { S.co = null; coPaper.visible = false; }
+  }
+  // phenolphthalein tubes
+  for (const p of phLiq) {
+    p.fill += (p.target - p.fill) * (1 - Math.exp(-dt * 3));
+    p.col.lerp(p.toCol, 1 - Math.exp(-dt * (p.fill > 0.9 ? 2.5 : 0)));
+    p.m.color.copy(p.col); p.m.opacity = 0.35 + 0.45 * p.colA * (p.fill > 0.9 ? 1 : 0.2);
+    setPhFill(p);
+  }
+  hudDirty = true;
+}
+phLiq.forEach(p => p.colA = 0);
+
+/* ================================================================
+   Visual update (every frame)
+   ================================================================ */
+const dummy = new THREE.Object3D();
+const limeClear = srgb(0.89, 0.95, 0.97), limeMilk = srgb(0.96, 0.96, 0.94);
+function visuals(dt) {
+  const fI = S.flameI;
+  for (const m of [flameOuter, flameInner]) m.material.uniforms.uTime.value = S.t;
+  flameOuter.material.uniforms.uInt.value = 0.7 * fI;
+  flameInner.material.uniforms.uInt.value = 0.75 * fI;
+  flameOuter.visible = flameInner.visible = fI > 0.01;
+  glowMat.opacity = 0.3 * fI; flameLight.intensity = 30 * fI;
+  // powder shrinks as mass is lost (density roughly similar)
+  const f = Math.cbrt(massSolid() / SAMPLE_G);
+  powder.scale.set(2.0 * f, 0.42 * f, 0.9 * f);
+  powderMat.color.setRGB(0.965, 0.965, 0.95 - 0.02 * conv());
+  // condensed droplets
+  const nd = S.broken && S.run ? 0 : Math.min(ND, Math.round(S.cond / 0.005));
+  drops.count = nd;
+  for (let i = 0; i < nd; i++) { const d = dropPos[i]; dummy.position.set(d.x, d.y, d.z); dummy.scale.setScalar(d.s); dummy.updateMatrix(); drops.setMatrixAt(i, dummy.matrix); }
+  drops.instanceMatrix.needsUpdate = true;
+  const pv = downhill() === 'mouth' ? Math.min(1, S.cond / 0.12) : 0;
+  pool.scale.set(0.9 * pv + 0.01, 0.12 * pv + 0.01, 0.7 * pv + 0.01);
+  runDrop.visible = !!S.run;
+  if (S.run) runDrop.position.set(S.run.x, -TR + 0.26, 0);
+  // lime water level + turbidity
+  setLimeLevel(LIME_LEVEL - 1.4 * S.suck);
+  const tb = 1 - Math.exp(-4 * S.turb);
+  limeMat.color.copy(limeClear).lerp(limeMilk, tb); limeMat.opacity = 0.28 + 0.62 * tb;
+  suckCol.visible = S.suck > 0.01;
+  if (suckCol.visible) {
+    const y0 = LIME_LEVEL - 1.4 * S.suck - dip.position.y, h = Math.max(0.05, (DIP_LEN + DIP_Y0 - y0 - 0.3) * S.suck);
+    suckCol.scale.y = h; suckCol.position.y = y0 + h / 2;
+  }
+  // bubbles
+  const spawn = S.dipped && S.suck === 0 ? Math.min(30, S.flow * 0.35) : 0;
+  S.bAcc = (S.bAcc || 0) + spawn * dt;
+  const tipY = DIP_Y0 + dip.position.y, lvl = LIME_LEVEL - 1.4 * S.suck;
+  let used = 0;
+  for (const b of bub) {
+    if (b.on) {
+      b.y += b.v * dt; b.ph += dt * 9;
+      if (b.y > lvl - 0.05) b.on = false;
+    } else if (S.bAcc >= 1) {
+      S.bAcc -= 1; b.on = true; b.x = (Math.random() - 0.5) * 0.3; b.z = (Math.random() - 0.5) * 0.3; b.y = tipY + 0.1;
+      b.v = 3 + Math.random() * 2.5; b.r = 0.1 + Math.random() * 0.16; b.ph = Math.random() * 6;
+    }
+    if (b.on) {
+      dummy.position.set(LIME.x + b.x + Math.sin(b.ph) * 0.12, b.y, LIME.z + b.z); dummy.scale.setScalar(b.r); dummy.updateMatrix();
+      bubbles.setMatrixAt(used++, dummy.matrix);
+    }
+  }
+  if (S.bAcc > 3) S.bAcc = 3;
+  bubbles.count = used; bubbles.instanceMatrix.needsUpdate = true;
+}
+
+/* ================================================================
+   HUD
+   ================================================================ */
+const $ = (id) => document.getElementById(id);
+let hudDirty = true, hudT = 0;
+function updateHud() {
+  const c = conv();
+  $('mass').innerHTML = `${massSolid().toFixed(2)}<small>g</small>`;
+  $('conv').textContent = `分解 ${Math.round(c * 100)}%`;
+  $('convBar').style.width = `${(c * 100).toFixed(1)}%`;
+  $('temp').innerHTML = `${Math.round(S.T)}<small>°C</small>`;
+  $('co2').innerHTML = `${Math.round(S.co2mL)}<small>mL</small>`;
+  $('h2o').innerHTML = `${S.h2oMade.toFixed(2)}<small>g</small>`;
+  const active = S.T > 100 && S.n / N0 > 0.01 && !S.broken;
+  for (const i of [0, 1, 2, 3]) $('e' + i).classList.toggle('lit', active);
+  const tb = 1 - Math.exp(-4 * S.turb);
+  const col = limeMat.color.clone().convertLinearToSRGB();
+  $('chip').style.background = `rgb(${Math.round(col.r * 255)},${Math.round(col.g * 255)},${Math.round(col.b * 255)})`;
+  $('chip').style.opacity = 0.55 + 0.45 * tb;
+  if (S.suck > 0.01) { $('lname').textContent = '逆流している！'; $('lnote').textContent = '試験管内の圧力が下がっている'; }
+  else if (S.turb < 0.08) { $('lname').textContent = '無色透明'; $('lnote').textContent = S.dipped ? 'Ca(OH)₂ 水溶液' : 'ガラス管は抜いてある'; }
+  else if (S.turb < 0.35) { $('lname').textContent = '白くにごり始めた'; $('lnote').textContent = 'CaCO₃ の沈殿ができている'; }
+  else { $('lname').textContent = '白くにごった'; $('lnote').textContent = 'Ca(OH)₂ + CO₂ → CaCO₃↓ + H₂O'; }
+}
+const logEl = $('log'); const LOGMAX = 7;
+function logPush(text, tag = '', color = '#fff', cls = '') {
+  const e = logEl.querySelector('.empty'); if (e) e.remove();
+  const li = document.createElement('li'); if (cls) li.className = cls;
+  li.innerHTML = `<i style="background:${color}"></i><span>${text}</span>${tag ? `<em>${tag}</em>` : ''}`;
+  logEl.prepend(li); while (logEl.children.length > LOGMAX) logEl.lastChild.remove();
+}
+let tt; function toast(s, warn = false) { const e = $('toast'); e.textContent = s; e.classList.toggle('warn', warn); e.style.opacity = 1; clearTimeout(tt); tt = setTimeout(() => e.style.opacity = 0, warn ? 3200 : 1900); }
+
+/* ================================================================
+   Controls
+   ================================================================ */
+function updateButtons() {
+  const b = $('bBurn');
+  b.textContent = S.burner ? '火を消す' : '火をつける'; b.classList.toggle('lit', S.burner);
+  $('bLift').textContent = S.liftTarget > 0.5 ? 'ガラス管を入れる' : 'ガラス管を抜く';
+  document.querySelectorAll('#tilt button').forEach(x => x.classList.toggle('on', x.dataset.t === S.tilt));
+}
+function setBurner(on) {
+  if (S.broken) { toast('試験管が割れています —「やり直す」を押してください'); return; }
+  if (on === S.burner) return;
+  S.burner = on;
+  if (on) logPush(S.tilt === 'down' ? '点火 — 試験管の底を加熱' : `点火 — 試験管は${S.tilt === 'up' ? '口が上向き' : '水平'}`, '', '#6f8cff');
+  else logPush(S.dipped ? '消火 — ガラス管は石灰水に入ったまま' : '消火', '', '#8899aa');
+  updateButtons();
+}
+function setLift(up) {
+  S.liftTarget = up ? 1 : 0;
+  if (up && S.suck > 0) toast('ガラス管を引き上げています…');
+  updateButtons();
+}
+function setTilt(t) {
+  if (!(t in TILT) || t === S.tilt) return;
+  S.tilt = t; updateButtons();
+  if (t !== 'down') toast(t === 'up' ? '口が上向き：冷えた水が熱い底へ流れ戻るおそれ' : '水平：水が少しずつ底へ流れ戻るおそれ');
+}
+function testCoCl2() {
+  if (S.burner) { toast('先に火を消して、試験管を冷ましてください'); return; }
+  const water = S.cond + (S.run ? S.run.amt : 0);
+  const pink = water > 0.01;
+  S.co = { t: 0, pink }; coPaper.visible = true; coPaperMat.color.set(0x2b55c9);
+  logPush(pink ? '塩化コバルト紙：青 → 赤（桃）→ 液体は水をふくむ（H₂O が発生）' : '塩化コバルト紙は青のまま — 口元にまだ液体がない', 'H₂O', pink ? '#f08fb0' : '#2b55c9', pink ? 'ok' : '');
+}
+function testPh() {
+  if (S.burner) { toast('先に火を消してください'); return; }
+  if (S.T > 60) { toast('試験管が冷めてから、残った固体を取り出そう'); return; }
+  const c = conv();
+  const faint = srgb(0.99, 0.9, 0.94), deep = srgb(0.86, 0.12, 0.5);
+  phLiq[0].target = 1; phLiq[0].toCol = faint.clone(); phLiq[0].colA = 0.15;
+  phLiq[1].target = 1; phLiq[1].toCol = faint.clone().lerp(deep, Math.pow(c, 0.8)); phLiq[1].colA = 0.15 + 0.85 * c;
+  phLiq.forEach(p => { if (p.fill > 0.9) { p.fill = 0; p.col.set(0xf2f7f9); } });
+  logPush(c < 0.1 ? 'フェノールフタレイン：どちらもうすい赤 — まだほとんど分解していない'
+    : `フェノールフタレイン：加熱後の固体は${c > 0.8 ? '濃い' : ''}赤 — Na₂CO₃ は NaHCO₃ より強い塩基性`, 'pH', c < 0.1 ? '#fbe3ec' : '#d81f80', c >= 0.1 ? 'ok' : '');
+  S.phDone = true;
+}
+function reset() {
+  S = fresh();
+  crack.visible = false; tubeMat.color.set(0xffffff); tubeMat.opacity = 0.13; coPaper.visible = false; runDrop.visible = false;
+  phLiq.forEach(p => { p.fill = 0; p.target = 0; p.colA = 0; p.col.set(0xf2f7f9); p.toCol.set(0xf2f7f9); });
+  tube.rotation.z = S.theta; dip.position.y = 0; rebuildRubber();
+  logEl.innerHTML = '<li class="empty">ガスバーナーに火をつけて加熱を始めよう</li>';
+  updateButtons(); hudDirty = true;
+}
+$('bBurn').addEventListener('click', () => setBurner(!S.burner));
+$('bLift').addEventListener('click', () => setLift(S.liftTarget < 0.5));
+$('bReset').addEventListener('click', reset);
+$('bCo').addEventListener('click', testCoCl2);
+$('bPh').addEventListener('click', testPh);
+document.querySelectorAll('#tilt button').forEach(b => b.addEventListener('click', () => setTilt(b.dataset.t)));
+
+function onResize() {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight, false); hudDirty = true;
+}
+addEventListener('resize', onResize);
+
+/* ================================================================
+   Loop
+   ================================================================ */
+tube.rotation.z = S.theta; rebuildRubber(); updateButtons(); onResize();
+const clock = new THREE.Clock();
+function frame() {
+  const dt = Math.min(clock.getDelta(), 1 / 20);
+  if (!S.paused) { sim(dt); visuals(dt); }
+  controls.update();
+  hudT += dt;
+  if (hudDirty && hudT > 1 / 15) { hudT = 0; hudDirty = false; updateHud(); }
+  renderer.render(scene, camera);
+}
+renderer.setAnimationLoop(frame);
+
+// hook for automated checks; has no effect on normal use
+window.__soda = {
+  get S() { return S; }, N0, M, conv, massSolid,
+  setBurner, setLift, setTilt, testCoCl2, testPh, reset,
+  click(id) { document.getElementById(id).click(); },
+  step(sec, h = 1 / 60) { for (let t = 0; t < sec; t += h) { sim(h); visuals(h); } updateHud(); renderer.render(scene, camera); },
+  hold(on) { renderer.setAnimationLoop(on ? null : frame); if (on) { controls.update(); updateHud(); renderer.render(scene, camera); } },
+  view(t, p) { controls.target.set(...t); camera.position.set(...p); controls.update(); }
+};
+</script>
+</body>
+</html>
