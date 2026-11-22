@@ -9,3 +9,8 @@
 5. X のカード確認：投稿画面に URL を貼って、OGP 画像が出るか確認してから投稿
 
 > 執行役に「公開リポジトリを作って」と指示すれば、非公開で作成して push までは代行できる（Public への切り替えと Pages の有効化は社長が行う）。
+
+## 公開状況
+| slug | 公開用リポジトリ | 状態 |
+|---|---|---|
+| baking-soda-decomposition-3d | Kaname-chemistry/baking-soda-decomposition-3d | index.html と ogp.jpg を main に push 済み（非公開）。**社長作業：Public に切り替え → Pages を有効化** |
