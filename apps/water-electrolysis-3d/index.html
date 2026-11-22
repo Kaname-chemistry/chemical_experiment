@@ -98,7 +98,7 @@
 <div id="hint">ドラッグで回転 · ホイール / ピンチで拡大</div>
 
 <div id="hud" class="glass">
-  <div class="cap">たまった気体の体積（25 °C）</div>
+  <div class="cap">たまった気体の体積（25 °C・1気圧として計算）</div>
   <div class="gas">
     <div><div class="k" id="kL">左の管 · 陰極（−）</div><div class="v" id="vL">0.0<small>mL</small></div><div class="n" id="nL">まだ調べていない</div></div>
     <div><div class="k" id="kR">右の管 · 陽極（＋）</div><div class="v" id="vR">0.0<small>mL</small></div><div class="n" id="nR">まだ調べていない</div></div>
@@ -473,11 +473,11 @@ function sim(dt) {
     if (tb.release > 0) { const r = Math.min(tb.gas, tb.gas * (1 - Math.exp(-dt * 3.5)) + dt * 0.4); tb.gas -= r; tb.release -= dt; if (tb.gas < 0.02) tb.gas = 0; }
   });
   // one-off log lines
-  if (S.on && !S.flags.noCurrent && S.elec === 'water' && S.t - S.onAt > 1.0) { S.flags.noCurrent = true; logPush('電流がほとんど流れない — 純粋な水は電気を通しにくい', '', '#9fb3c0'); toast('純粋な水では電流がほとんど流れない', true); }
-  if (S.on && !S.flags.lowV && S.elec === 'naoh' && S.V <= V_DEC && S.t - S.onAt > 1.0) { S.flags.lowV = true; logPush(`電圧が低すぎて、電気分解が起こらない（${V_DEC} V 以下）`, '', '#9fb3c0'); }
+  if (S.on && !S.flags.noCurrent && S.elec === 'water' && S.t - S.onAt > 1.0) { S.flags.noCurrent = true; logPush('電流がほとんど流れない — 純粋な水にはイオンがほとんどなく、電気を通しにくい', '', '#9fb3c0'); toast('純粋な水では電流がほとんど流れない', true); }
+  if (S.on && !S.flags.lowV && S.elec === 'naoh' && S.V <= V_DEC && S.t - S.onAt > 1.0) { S.flags.lowV = true; logPush(`電圧が低すぎて、電気分解が起こらない（約${V_DEC} V 以下）`, '', '#9fb3c0'); }
   if (S.on && S.cock && !S.flags.escape && (tubes[0].escaped || 0) > 0.6) { S.flags.escape = true; logPush('活栓が開いていて、気体がたまらずに逃げていく', '失敗', '#e8a87c'); toast('活栓が開いたまま — 気体が外に逃げてたまらない', true); }
   if (!S.flags.bub && S.I > 0.05) { S.flags.bub = true; logPush('両方の電極から気体の泡が出てきた', '', '#dff0ff'); }
-  if (!S.flags.ratio && tubes[cathode()].gas > 10) { S.flags.ratio = true; logPush(`陰極側の気体が陽極側のおよそ2倍たまる（${ratioText()}）`, '2:1', '#cfe6f2', 'ok'); }
+  if (!S.flags.ratio && tubes[cathode()].gas > 10) { S.flags.ratio = true; logPush(`陰極側の気体が陽極側のおよそ2倍たまる（${ratioText()}）。ぴったり2にならないのは、酸素のほうが水に少し多く溶けるため`, '2:1', '#cfe6f2', 'ok'); }
   if (S.on && tubes[cathode()].gas >= CAP) { setPower(false); toast('目盛りいっぱいになったので電源を切った'); }
   // test animation
   if (S.test) stepTest(dt);
@@ -518,7 +518,7 @@ function stepTest(dt) {
     if (T.tool === 'match' && tb.kind === 'H2') { popSound(); toast('ポン！', false, 'pop'); logPush(`${side}の管：マッチの火を近づけると、ポンと音を立てて燃えた → 水素`, 'H₂', '#fff1c0', 'ok'); }
     else if (T.tool === 'incense' && tb.kind === 'O2') { logPush(`${side}の管：火のついた線香が、炎を上げて激しく燃えた → 酸素`, 'O₂', '#ffb070', 'ok'); toast('線香が炎を上げて燃えた！'); }
     else if (T.tool === 'match') { logPush(`${side}の管：マッチの炎が明るくなったが、ポンとは鳴らない → 水素ではない`, '', '#ffd9a0'); toast('ポンとは鳴らない…'); }
-    else { logPush(`${side}の管：線香を入れても炎は上がらない → 酸素ではない`, '', '#c8b090'); toast('線香は燃え上がらない…'); }
+    else { logPush(`${side}の管：線香を近づけても炎は上がらない → 酸素ではない`, '', '#c8b090'); toast('線香は燃え上がらない…'); }
   }
   // fire / flash visuals
   const k = T.done ? T.t - 0.9 : -1;
@@ -649,11 +649,11 @@ function setRev(rev) {
   if (totalGas() > 0.1) { toast('管に気体が残っています —「やり直す」で空にしてから'); return; }
   S.rev = rev; tubes.forEach(t => { t.dissolved = 0; });
   rebuildWires(S.rev); drawElLabels(S.rev);
-  logPush(rev ? 'つなぎ方を逆にした：左が陽極（＋）、右が陰極（−）' : 'つなぎ方を元に戻した：左が陰極（−）、右が陽極（＋）', '', '#c0392b');
+  logPush(rev ? 'つなぎ方を逆にした：左が陽極（＋）、右が陰極（−）。水素はいつも陰極（−）側にたまる' : 'つなぎ方を元に戻した：左が陰極（−）、右が陽極（＋）', '', '#c0392b');
   $('bRev').textContent = rev ? 'つなぎ方を元に戻す' : 'つなぎ方を逆にする';
   hudDirty = true;
 }
-function setElec(e) { if (e in R_OHM) { S.elec = e; S.flags.noCurrent = false; if (S.on) S.onAt = S.t; logPush(e === 'naoh' ? '液体：水酸化ナトリウム水溶液（電流を流れやすくする）' : '液体：純粋な水', '', '#cfe6f2'); updateButtons(); } }
+function setElec(e) { if (e in R_OHM) { S.elec = e; S.flags.noCurrent = false; if (S.on) S.onAt = S.t; logPush(e === 'naoh' ? '液体：水酸化ナトリウム水溶液（イオンが増えて電流が流れやすくなる）' : '液体：純粋な水', '', '#cfe6f2'); updateButtons(); } }
 function setVolt(v) { S.V = Math.max(0, Math.min(12, +v)); S.flags.lowV = false; if (S.on) S.onAt = S.t; updateButtons(); hudDirty = true; }
 function setTool(t) { if (t === 'match' || t === 'incense') { S.tool = t; updateButtons(); } }
 function reset() {
