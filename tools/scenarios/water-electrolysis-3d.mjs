@@ -81,12 +81,12 @@ export async function ogp(page) {
 
 // ---------- 撮影部：実演動画の台本 ----------
 const WIDE = { target: [5, 11.5, 1], pos: [10, 19.5, 62] };
-const TOPS = { target: [0, 19, 0], pos: [4, 24, 34] };
+const TOPS = { target: [0, 24, 0], pos: [4, 27.5, 30] };
 export const videos = {
   'ratio-pop': {
     seconds: 23,
     speedJs: `const S = api.S; return (S.on && api.tubes[api.cathode()].gas < 20) ? 2 : 1;`,
-    cam: [{ t: 0, ...WIDE }, { t: 8, ...WIDE }, { t: 10, ...TOPS }, { t: 23, target: [0, 19, 0], pos: [5, 24.5, 36] }],
+    cam: [{ t: 0, ...WIDE }, { t: 8, ...WIDE }, { t: 10, ...TOPS }, { t: 23, target: [0, 24, 0], pos: [5, 28, 31] }],
     cues: [
       { t: 0.3, caption: '陰極と陽極、たまる気体の量は？', hold: 2.6 },
       { t: 1.0, click: '#bPow' },
