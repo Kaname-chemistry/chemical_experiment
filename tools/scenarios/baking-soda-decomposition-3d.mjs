@@ -87,7 +87,7 @@ export const videos = {
   'suck-back-save': {
     seconds: 11,
     setup: `api.reset(); api.setBurner(true); api.step(22);`,
-    cam: [{ t: 0, target: [-11, 11, 1], pos: [-5, 21, 36] }, { t: 5, target: [-16, 10.5, 2], pos: [-11.5, 16.5, 26] }, { t: 11, target: [-16, 10.5, 2], pos: [-10.5, 17, 27] }],
+    cam: [{ t: 0, target: [-11, 11, 1], pos: [-5, 21, 36] }, { t: 5, target: [-16, 7, 2], pos: [-11, 18, 28] }, { t: 11, target: [-16, 7, 2], pos: [-10, 18.5, 29] }],
     cues: [
       { t: 0.2, caption: 'ガラス管を石灰水に入れたまま火を消すと…', hold: 2.6 },
       { t: 1.2, click: '#bBurn' },
