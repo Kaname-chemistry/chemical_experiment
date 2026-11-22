@@ -11,7 +11,7 @@ URL: https://kaname-chemistry.github.io/baking-soda-decomposition-3d/
 > わざと失敗できます👇
 > https://kaname-chemistry.github.io/baking-soda-decomposition-3d/
 
-**画像/動画**：「Mouth up」を押す → 水滴が底へ流れる → 割れる、の8秒画面録画。最初の1秒で「Mouth up」ボタンを映す
+**動画**：`media/baking-soda-decomposition-3d/mouth-up-crack.mp4`（13秒）
 
 ## 案B：「逆流ハラハラ」型
 > 火を先に消すと石灰水が逆流する。
@@ -20,7 +20,7 @@ URL: https://kaname-chemistry.github.io/baking-soda-decomposition-3d/
 > #理科 #化学 #中学理科
 > https://kaname-chemistry.github.io/baking-soda-decomposition-3d/
 
-**画像/動画**：Turn off burner → 石灰水がガラス管を上がる → Lift で助かる、の10秒録画
+**動画**：`media/baking-soda-decomposition-3d/suck-back-save.mp4`（11秒）
 
 ## 案C：「量的関係」型（先生・受験生向け）
 > 炭酸水素ナトリウム 2.00 g を加熱すると、残るのは何 g？
@@ -31,7 +31,7 @@ URL: https://kaname-chemistry.github.io/baking-soda-decomposition-3d/
 > 3Dで加熱しながら、質量・温度・CO₂ 量がリアルタイムで見られます。授業の導入にどうぞ。
 > https://kaname-chemistry.github.io/baking-soda-decomposition-3d/
 
-**画像**：ogp.jpg（HUD に 1.47 g / 72% / milky white が映っている）
+**動画**：`media/baking-soda-decomposition-3d/full-experiment.mp4`（24秒）。画像だけで出すなら ogp.jpg
 
 ## 補足
 - ハッシュタグは最大2つまで（多すぎると伸びにくい）

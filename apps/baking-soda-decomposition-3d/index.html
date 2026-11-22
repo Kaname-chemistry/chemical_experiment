@@ -106,7 +106,7 @@
   <div id="eq"><span id="e0">2NaHCO₃</span> → <span id="e1">Na₂CO₃</span> + <span id="e2">H₂O</span> + <span id="e3">CO₂</span></div>
   <div class="reads">
     <div class="rd"><div class="k">Bottom</div><div class="v" id="temp">25<small>°C</small></div></div>
-    <div class="rd"><div class="k">CO₂ out</div><div class="v" id="co2">0<small>mL</small></div></div>
+    <div class="rd"><div class="k">CO₂ (25 °C)</div><div class="v" id="co2">0<small>mL</small></div></div>
     <div class="rd x"><div class="k x">Water</div><div class="v" id="h2o">0.00<small>g</small></div></div>
   </div>
   <div class="cap">Lime water</div>
@@ -416,7 +416,7 @@ const dropPos = [];
   }
 }
 const pool = add(new THREE.SphereGeometry(1, 16, 10), waterMat, { p: [MOUTH_X + 0.9, -TR + 0.12, 0], s: [0.01, 0.01, 0.01], to: tube, ro: 7 });
-const runDrop = add(new THREE.SphereGeometry(1, 14, 10), waterMat, { s: [0.5, 0.16, 0.38], to: tube, ro: 7 });
+const runDrop = add(new THREE.SphereGeometry(1, 14, 10), waterMat, { s: [0.75, 0.24, 0.55], to: tube, ro: 7 });
 runDrop.visible = false;
 // CoCl2 paper strip (appears at the mouth during the test)
 const coPaperMat = new THREE.MeshStandardMaterial({ color: 0x2b55c9, roughness: 0.9, side: THREE.DoubleSide });
@@ -567,11 +567,11 @@ function sim(dt) {
   if (S.dipped && S.suck === 0) {
     S.absorbed += ABSORB * gasMol;
     S.turb = Math.min(1, S.absorbed / LIME_CAP);
-    if (!S.flags.air && S.flow > 0.5 && S.co2mL < 3) { S.flags.air = true; logPush('First bubbles are expanded air — lime water stays clear', '', '#bfe3f2'); }
+    if (!S.flags.air && S.flow > 0.5 && S.co2mL < 3) { S.flags.air = true; logPush('First bubbles are air pushed out of the tube — lime water stays clear', '', '#bfe3f2'); }
     if (!S.flags.milky && S.turb > 0.08) { S.flags.milky = true; logPush('Lime water turns milky → CO₂ is produced', 'CO₂', '#f1f1ec', 'ok'); }
   }
   if (!S.flags.water && S.cond > 0.015) { S.flags.water = true; logPush('Droplets of liquid form near the mouth', '', '#dff0ff'); }
-  if (!S.flags.done && conv() > 0.99) { S.flags.done = true; logPush(`Decomposition complete: 2.00 g → ${massSolid().toFixed(2)} g`, 'done', '#f6f6f2', 'ok'); }
+  if (!S.flags.done && conv() > 0.999) { S.flags.done = true; logPush(`Decomposition complete: 2.00 g → ${massSolid().toFixed(2)} g`, 'done', '#f6f6f2', 'ok'); }
   if (S.burner && !S.dipped && !S.flags.openAir && S.flow > 0.5) { S.flags.openAir = true; logPush('Gas escaping to air — lime water not tested', '', '#c8d0d6'); }
 
   // tilt animation (and condensed water flowing)
@@ -590,7 +590,7 @@ function sim(dt) {
       if (S.run.x <= MOUTH_X + 1.2) { S.cond += S.run.amt; S.run = null; logPush('Water drained back to the mouth', 'saved', '#dff0ff', 'ok'); }
       else if (S.run.x >= POW_X - 2.0) {
         if (S.T > CRACK_T) crackTube('Water ran back onto the hot glass and the tube cracked. Keep the mouth slightly lower than the bottom.');
-        else { logPush('Water ran back onto the powder (tube was cool)', '', '#dff0ff'); S.run = null; }
+        else { logPush('Water ran back onto the powder — not hot enough to crack yet, but still dangerous', '', '#dff0ff'); S.run = null; }
       }
     }
   }
@@ -599,7 +599,7 @@ function sim(dt) {
   if (cooling || (S.suck > 0 && S.dipped && !S.burner && !S.broken)) {
     S.suckT += dt;
     if (S.suckT > 0.6) {
-      if (!S.sucking) { S.sucking = true; toast('Lime water is being drawn back up the tube — lift it out!', true); logPush('Gas in the tube contracts as it cools', '', '#e4f1f6'); }
+      if (!S.sucking) { S.sucking = true; toast('Lime water is being drawn back up the tube — lift it out!', true); logPush('Gas cools and steam condenses — pressure in the tube drops', '', '#e4f1f6'); }
       S.suck = Math.min(1, S.suck + dt / 3.2);
     }
     if (S.suck >= 1) crackTube('Suck-back: cold lime water reached the hot tube and cracked it. Take the tube out of the lime water before turning off the burner.');
@@ -655,7 +655,7 @@ function visuals(dt) {
   const pv = downhill() === 'mouth' ? Math.min(1, S.cond / 0.12) : 0;
   pool.scale.set(0.9 * pv + 0.01, 0.12 * pv + 0.01, 0.7 * pv + 0.01);
   runDrop.visible = !!S.run;
-  if (S.run) runDrop.position.set(S.run.x, -TR + 0.18, 0);
+  if (S.run) runDrop.position.set(S.run.x, -TR + 0.26, 0);
   // lime water level + turbidity
   setLimeLevel(LIME_LEVEL - 1.4 * S.suck);
   const tb = 1 - Math.exp(-4 * S.turb);
@@ -706,7 +706,7 @@ function updateHud() {
   const col = limeMat.color.clone().convertLinearToSRGB();
   $('chip').style.background = `rgb(${Math.round(col.r * 255)},${Math.round(col.g * 255)},${Math.round(col.b * 255)})`;
   $('chip').style.opacity = 0.55 + 0.45 * tb;
-  if (S.suck > 0.01) { $('lname').textContent = 'being sucked back!'; $('lnote').textContent = 'gas in the tube is contracting'; }
+  if (S.suck > 0.01) { $('lname').textContent = 'being sucked back!'; $('lnote').textContent = 'pressure in the hot tube is dropping'; }
   else if (S.turb < 0.08) { $('lname').textContent = 'clear'; $('lnote').textContent = S.dipped ? 'Ca(OH)₂ solution' : 'delivery tube lifted out'; }
   else if (S.turb < 0.35) { $('lname').textContent = 'turning cloudy'; $('lnote').textContent = 'CaCO₃ precipitate forming'; }
   else { $('lname').textContent = 'milky white'; $('lnote').textContent = 'Ca(OH)₂ + CO₂ → CaCO₃↓ + H₂O'; }
@@ -752,7 +752,7 @@ function testCoCl2() {
   const water = S.cond + (S.run ? S.run.amt : 0);
   const pink = water > 0.01;
   S.co = { t: 0, pink }; coPaper.visible = true; coPaperMat.color.set(0x2b55c9);
-  logPush(pink ? 'CoCl₂ paper: blue → pink → the liquid is water' : 'CoCl₂ paper stays blue — no liquid at the mouth yet', 'H₂O', pink ? '#f08fb0' : '#2b55c9', pink ? 'ok' : '');
+  logPush(pink ? 'CoCl₂ paper: blue → pink → the liquid contains water (H₂O is produced)' : 'CoCl₂ paper stays blue — no liquid at the mouth yet', 'H₂O', pink ? '#f08fb0' : '#2b55c9', pink ? 'ok' : '');
 }
 function testPh() {
   if (S.burner) { toast('Turn the burner off first'); return; }
@@ -763,7 +763,7 @@ function testPh() {
   phLiq[1].target = 1; phLiq[1].toCol = faint.clone().lerp(deep, Math.pow(c, 0.8)); phLiq[1].colA = 0.15 + 0.85 * c;
   phLiq.forEach(p => { if (p.fill > 0.9) { p.fill = 0; p.col.set(0xf2f7f9); } });
   logPush(c < 0.1 ? 'Phenolphthalein: both faint pink — little has decomposed yet'
-    : `Phenolphthalein: residue turns ${c > 0.8 ? 'deep' : ''} pink — Na₂CO₃ is more strongly basic than NaHCO₃`, 'pH', c < 0.1 ? '#fbe3ec' : '#d81f80', c >= 0.1 ? 'ok' : '');
+    : `Phenolphthalein: residue turns ${c > 0.8 ? 'deep ' : ''}pink — Na₂CO₃ is more strongly basic than NaHCO₃`, 'pH', c < 0.1 ? '#fbe3ec' : '#d81f80', c >= 0.1 ? 'ok' : '');
   S.phDone = true;
 }
 function reset() {
