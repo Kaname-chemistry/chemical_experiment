@@ -3,7 +3,8 @@
 // シミュレーションを1コマずつ進めてスクショ → ffmpeg で H.264 MP4（X 投稿向け）
 // 処理が重くても動画は常に一定fpsでなめらか。カメラはイージング補間、タップ位置に波紋、早送り中は倍率表示、日本語字幕。
 import { spawn } from 'node:child_process';
-import { readFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, mkdirSync, existsSync, copyFileSync, unlinkSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT, launch, openPage, hookOf } from './lib.mjs';
@@ -57,8 +58,9 @@ for (const name of names) {
   await page.evaluate(([h, js]) => new Function('api', js)(window[h]), [hook, v.setup || 'api.reset();']);
 
   const out = path.join(outDir, `${name}.mp4`);
+  const tmp = path.join(os.tmpdir(), `${slug}-${name}-${process.pid}.mp4`);   // 撮影中の未完成ファイルをリポジトリに置かない
   const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
-    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '19', '-preset', 'medium', '-movflags', '+faststart', '-r', String(fps), out], { stdio: ['pipe', 'inherit', 'inherit'] });
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '19', '-preset', 'medium', '-movflags', '+faststart', '-r', String(fps), tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
   // 台本をページ内に渡す：cues（時刻で発火）と watch（状態で順に発火）
   await page.evaluate(([cues, watch, speed, speedJs]) => {
     window.__rec = { cues: cues.sort((a, b) => a.t - b.t), ci: 0, watch, wi: 0, wlast: 0, speed, speedJs, rip: null, cap: null };
@@ -93,6 +95,7 @@ for (const name of names) {
   }
   ff.stdin.end();
   await new Promise(r => ff.on('close', r));
+  copyFileSync(tmp, out); unlinkSync(tmp);
   console.log(`\r${name}: ${N} frames → ${path.relative(ROOT, out)}${errors.length ? '  ERRORS: ' + errors.join(' | ') : ''}`);
   await ctx.close();
 }
