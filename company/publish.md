@@ -15,3 +15,4 @@
 |---|---|---|
 | baking-soda-decomposition-3d | Kaname-chemistry/baking-soda-decomposition-3d | Public 済み。**社長作業：Pages を有効化（Settings → Pages → main / root → Save）** |
 | water-electrolysis-3d | Kaname-chemistry/water-electrolysis-3d | index.html と ogp.jpg を main に push 済み（非公開）。**社長作業：Public に切り替え → Pages を有効化** |
+| metal-tree-3d | Kaname-chemistry/metal-tree-3d | index.html と ogp.jpg を main に push 済み（非公開）。**社長作業：Public に切り替え → Pages を有効化** |
