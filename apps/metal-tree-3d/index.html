@@ -367,7 +367,7 @@ const BLOBS = [];
     }
   });
 }
-const blobMat = new THREE.MeshStandardMaterial({ color: 0x7a3a22, metalness: 0.45, roughness: 0.85 });
+const blobMat = new THREE.MeshStandardMaterial({ color: 0x6a311d, metalness: 0.45, roughness: 0.85 });
 const blobs = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), blobMat, BLOBS.length); blobs.count = 0; blobs.castShadow = true; treeG.add(blobs);
 // star
 const starShape = new THREE.Shape();
@@ -434,11 +434,12 @@ function sim(dt) {
     if (eq && !S.flags.e && S.simT > 900) {
       S.flags.e = true;
       const zs = METAL[S.sol].z;
-      logPush(`${METAL[S.wire].name}原子が電子を2個失って${METAL[S.wire].ion}に、${METAL[S.sol].ion}が電子を${zs}個受け取って${METAL[S.sol].name}原子になる`, '', '#cfe6f2');
+      const gain = zs === 1 ? `${METAL[S.sol].ion} 2個がそれぞれ電子を1個ずつ受け取って` : `${METAL[S.sol].ion}が電子を2個受け取って`;
+      logPush(`${METAL[S.wire].name}原子が電子を2個失って${METAL[S.wire].ion}に、${gain}${METAL[S.sol].name}原子になる`, '', '#cfe6f2');
     }
     if (eq && S.sol === 'Ag' && S.wire === 'Cu' && !S.flags.blue && conv() > 0.25) { S.flags.blue = true; logPush('液がだんだん青くなってきた — 銅がイオン（Cu²⁺）になって溶け出したから', 'Cu²⁺', '#5aa6e6'); }
     if (eq && S.sol === 'Cu' && !S.flags.fade && conv() > 0.5) { S.flags.fade = true; logPush('液の青色がうすくなってきた — 青い Cu²⁺ が減って銅になったから', 'Cu²⁺', '#9cc6e8'); }
-    if (eq && S.wire === 'Mg' && !S.flags.h2 && S.simT > 600) { S.flags.h2 = true; logPush('マグネシウムは水とも少し反応して、水素の泡も出ている', 'H₂', '#ffffff'); }
+    if (S.wire === 'Mg' && !S.flags.h2 && S.simT > 600) { S.flags.h2 = true; logPush(eq ? 'マグネシウムは水溶液中の水とも反応して、水素の泡が出る' : 'マグネシウムが水とわずかに反応して、小さな泡が少し出る（金属樹はできない）', 'H₂', '#ffffff'); }
     if (eq && !S.flags.done && conv() > 0.9) { S.flags.done = true; logPush(`ツリーが完成！ ${METAL[S.sol].name} ${Math.round(deposit())} mg が出てきた`, '完成', '#ffcc33'); toast('ツリーが完成！ 星をのせて、ライトアップしてみよう'); }
   }
   S.light += ((S.lightOn ? 1 : 0) - S.light) * (1 - Math.exp(-dt * 3));
@@ -477,7 +478,7 @@ function visuals(dt) {
         dummy.scale.set(wide * s.w, s.L * g * lenK, thin * s.w); dummy.updateMatrix();
         needles.setMatrixAt(n++, dummy.matrix);
       }
-      depMat.color.set(kind === 'Ag' ? (S.wire === 'Cu' ? 0xf2f5f7 : 0xc9cdd1) : 0x8a9096);
+      depMat.color.set(kind === 'Ag' ? (S.wire === 'Cu' ? 0xf2f5f7 : 0x9a9fa4) : 0x6c7176);
       depMat.roughness = kind === 'Ag' ? 0.14 : 0.45;
     }
     if (kind === 'Cu') {
@@ -504,7 +505,7 @@ function visuals(dt) {
   wireMat.color.set(WIRE_COL[S.wire]);
   // magnesium bubbles
   let used = 0;
-  const rate = eq && S.wire === 'Mg' && S.drop >= 1 ? 30 * (0.3 + 0.7 * (S.ion / ION0)) : 0;
+  const rate = S.wire === 'Mg' && S.drop >= 1 ? (eq ? 40 * (0.3 + 0.7 * (S.ion / ION0)) : 3) : 0;
   S.bAcc = Math.min(3, (S.bAcc || 0) + rate * dt);
   for (const b of bub) {
     if (b.on) { b.y += b.v * dt; if (b.y > LIQ - 0.1) b.on = false; }
@@ -579,7 +580,7 @@ function insert() {
   if (S.inBeaker) return;
   S.inBeaker = true;
   logPush(`${WIRE_NAME[S.wire]}のツリーを${SOLN[S.sol]}に入れた`, '', '#7fb7d6');
-  if (S.sol === 'Ag' && !S.flags.agNote) { S.flags.agNote = true; logPush('※ 実際の硝酸銀は皮膚につくと黒くなる薬品。先生が扱います', '', '#c8d0d6'); }
+  if (S.sol === 'Ag' && !S.flags.agNote) { S.flags.agNote = true; logPush('※ 実際の硝酸銀は皮膚につくと黒くなり、目に入ると危険な薬品。先生が扱います', '', '#c8d0d6'); }
   updateButtons();
 }
 function setWire(w) { if (S.inBeaker || !(w in WIRE_NAME)) return; S.wire = w; lastP = -1; drawCard(); updateButtons(); hudDirty = true; }
