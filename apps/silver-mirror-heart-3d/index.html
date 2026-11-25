@@ -107,7 +107,7 @@
   <div class="reads">
     <div class="rd"><div class="k">湯の温度</div><div class="v" id="rT">60<small>°C</small></div></div>
     <div class="rd"><div class="k">鏡になった銀</div><div class="v" id="rM">0<small>mg</small></div></div>
-    <div class="rd x"><div class="k">黒い粉</div><div class="v" id="rP">0<small>mg</small></div></div>
+    <div class="rd x"><div class="k" id="kP">黒い粉</div><div class="v" id="rP">0<small>mg</small></div></div>
   </div>
   <div class="cap">鏡の出来ばえ</div>
   <div class="score"><div id="stars"><span class="off">★★★</span></div><div id="sname">液を捨てるとわかる</div></div>
@@ -149,8 +149,8 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
    RCHO + 2[Ag(NH3)2]+ + 3OH- -> RCOO- + 2Ag + 4NH3 + 2H2O
    ================================================================ */
 const SUBST = {
-  glucose:  { name: 'グルコース（ブドウ糖）', k: 1.0, why: '水溶液中で鎖状の構造になると、アルデヒド基をもつ。アルデヒド基が酸化され、銀イオンが還元されて銀になる。' },
-  fructose: { name: 'フルクトース（果糖）', k: 0.75, why: 'ケトンの構造だが、塩基性の水溶液中では還元性を示す。' },
+  glucose:  { name: 'グルコース（ブドウ糖）', k: 1.0, why: '水溶液中で鎖状の構造になると、アルデヒド基（ホルミル基）をもつ。アルデヒド基が酸化され、銀イオンが還元されて銀になる。' },
+  fructose: { name: 'フルクトース（果糖）', k: 0.75, why: '鎖状の構造で –CO–CH₂OH の部分をもち、これが還元性を示す（ケトンだが例外）。' },
   sucrose:  { name: 'スクロース（ショ糖・砂糖）', k: 0, why: 'グルコースとフルクトースの、還元性を示す部分どうしで結合しているため、還元性を示さない。' },
   acetone:  { name: 'アセトン', k: 0, why: 'ケトンは還元性を示さない。' },
 };
@@ -339,7 +339,7 @@ const noiseTex = (() => {
 })();
 const mirrorPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
 const liqPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-const mirrorMat = new THREE.MeshStandardMaterial({ color: 0xe9edf0, metalness: 1, roughness: 0.06, envMapIntensity: 1.6,
+const mirrorMat = new THREE.MeshStandardMaterial({ color: 0xf4f6f8, metalness: 1, roughness: 0.04, envMapIntensity: 2.3,
   alphaMap: noiseTex, alphaTest: 1, clippingPlanes: [mirrorPlane], side: THREE.DoubleSide });
 const mirror = add(heartGeo, mirrorMat, { s: [0.95, 0.95, 0.86], to: flask, ro: 2 });
 const liqMat = new THREE.MeshPhysicalMaterial({ color: 0xeef4f6, roughness: 0.1, transparent: true, opacity: 0.25, depthWrite: false, clippingPlanes: [liqPlane], envMapIntensity: 1.2 });
@@ -387,10 +387,10 @@ function sim(dt) {
       if (f > 0.6) logPush('ガラスの内側に、銀がはりつき始めた', 'Ag', '#e9edf0', 'ok');
       else logPush('液が黒っぽくにごってきた — 銀が細かい粒になって出ている', '', '#3a3633');
     }
-    if (!S.flags.dirty && !S.clean && S.r > 0.12) { S.flags.dirty = true; logPush('ガラスが汚れていて、銀がまだらにしかつかない', '失敗', '#6b6560'); }
+    if (!S.flags.dirty && !S.clean && S.r > 0.12) { S.flags.dirty = true; logPush('ガラスに油汚れがあって銀がつきにくく、まだらになる（つかなかった銀は液の中に出る）', '失敗', '#6b6560'); }
     if (!S.flags.hot && S.T > 78 && SUBST[S.subst].k > 0 && S.r < 0.95) { S.flags.hot = true; logPush('温度が高すぎて反応が速すぎる — 銀が黒い粉になって沈む', '失敗', '#3a3633'); }
     if (!S.flags.cold && S.T < 40 && SUBST[S.subst].k > 0 && S.simT > 240 && S.r < 0.5) { S.flags.cold = true; logPush('温度が低くて、反応がなかなか進まない', '', '#9fb3c0'); }
-    if (!S.flags.shook && S.shake > 0 && SUBST[S.subst].k > 0 && S.r < 0.95) { S.flags.shook = true; logPush('ゆすると、銀がガラスにつかず黒い粉になる', '失敗', '#3a3633'); }
+    if (!S.flags.shook && S.shake > 0 && SUBST[S.subst].k > 0 && S.r < 0.95) { S.flags.shook = true; logPush('ゆすると、銀がガラスにむらなくつきにくく、液の中で黒っぽい粒になって出やすい', '失敗', '#3a3633'); }
     if (!S.flags.done && S.r > 0.97) { S.flags.done = true; logPush('反応がほぼ終わった — 液を捨てて、中を見てみよう', '', '#f2b8c9'); toast('液を捨てて、中を見てみよう'); }
   }
   // powder settles to the bottom
@@ -403,7 +403,7 @@ function sim(dt) {
 /* ================================================================
    Visuals
    ================================================================ */
-const SILVER = new THREE.Color(0xe9edf0), BLACK = new THREE.Color(0x3b3734), CLEAR = new THREE.Color(0xeef4f6), MURK = new THREE.Color(0x4e4844);
+const SILVER = new THREE.Color(0xf4f6f8), BLACK = new THREE.Color(0x3b3734), CLEAR = new THREE.Color(0xeef4f6), MURK = new THREE.Color(0x4e4844);
 function visuals(dt) {
   holder.position.y = 6.5 * ease(S.lift);
   flask.rotation.y = S.lift > 0 ? Math.sin(S.t * 0.6) * 0.5 * S.lift : 0;
@@ -460,6 +460,7 @@ function updateHud() {
   $('rT').innerHTML = `${Math.round(S.T)}<small>°C</small>`;
   $('rM').innerHTML = `${Math.round(S.mirror)}<small>mg</small>`;
   $('rP').innerHTML = `${Math.round(S.powder)}<small>mg</small>`;
+  $('kP').textContent = S.clean ? '黒い粉' : '液の中に出た銀';
   $('stars').innerHTML = starHtml(S.stars);
   $('sname').textContent = S.stars == null ? '液を捨てるとわかる' : ['鏡にならなかった', 'まだらな鏡', 'なかなかの鏡', 'ピカピカの鏡！'][S.stars];
 }
@@ -488,7 +489,7 @@ function start() {
   S.started = true;
   logPush(`アンモニア性硝酸銀水溶液に${SUBST[S.subst].name.split('（')[0]}の水溶液を加えて、${Math.round(S.target)} °Cの湯で温めた`, '', '#f2b8c9');
   if (!S.flags.note) { S.flags.note = true; logPush('※ アンモニア性硝酸銀水溶液は、作ったらすぐ使い、使い終わったらすぐ先生が処理する薬品（長く置くと危険な物質ができる）', '', '#c8d0d6'); }
-  if (S.subst === 'fructose') logPush('フルクトースはケトンの構造だが、塩基性の水溶液中では還元性を示す', '', '#f6e3a8');
+  if (S.subst === 'fructose') logPush('フルクトースは鎖状の構造で –CO–CH₂OH の部分をもち、これが還元性を示す（ケトンだが例外）', '', '#f6e3a8');
   updateButtons();
 }
 function shake() {

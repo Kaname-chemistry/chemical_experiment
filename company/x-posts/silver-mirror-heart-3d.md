@@ -37,6 +37,7 @@ https://kaname-chemistry.github.io/silver-mirror-heart-3d/
 ・メッセージを入れて写真を保存できます
 
 ★3の鏡、作れますか？
+※実際の実験は、学校で先生の指導のもとで
 ```
 
 ### コメント2

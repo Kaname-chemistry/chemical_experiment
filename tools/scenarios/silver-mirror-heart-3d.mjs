@@ -33,12 +33,12 @@ export async function scenarios(page, check, shots) {
   // 4. フルクトース
   await run(page, `api.reset(); api.setSubst('fructose'); api.start(); api.step(1.5); api.step(30); api.pour(); api.step(1);`);
   s = await state(page);
-  check('フルクトースでも鏡ができる', s.r > 0.95 && s.stars >= 2 && s.log.some(l => /塩基性の水溶液中では還元性/.test(l)), `★${s.stars}`);
+  check('フルクトースでも鏡ができる', s.r > 0.95 && s.stars >= 2 && s.log.some(l => /ケトンだが例外/.test(l)), `★${s.stars}`);
 
   // 5. 汚れたガラス
   await run(page, `api.reset(); api.setSubst('glucose'); api.setClean(false); api.start(); api.step(1.5); api.step(25); api.pour(); api.step(3);`);
   s = await state(page);
-  check('汚れたガラス → まだら（★1以下）', s.stars <= 1 && s.log.some(l => /汚れていて/.test(l)), `★${s.stars}`);
+  check('汚れたガラス → まだら（★1以下）', s.stars <= 1 && s.log.some(l => /油汚れ/.test(l)), `★${s.stars}`);
   await page.screenshot({ path: `${shots}/silver-mirror-heart-3d-dirty.jpg`, type: 'jpeg', quality: 82 });
 
   // 6. 熱すぎる（90 °C）
